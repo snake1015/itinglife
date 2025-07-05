@@ -1,19 +1,19 @@
 <template>
-  <div id="app">
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="nav-brand">itinglife</div>
-        <div class="nav-links">
-          <a href="/" class="nav-link">首页</a>
-          <a href="/tech" class="nav-link">技术分享</a>
-          <a href="/life" class="nav-link">生活分享</a>
-          <a href="/about" class="nav-link">关于</a>
-          <a href="/contact" class="nav-link">联系我们</a>
-          <a href="/admin" class="nav-link">后台管理</a>
+  <div>
+    <header>
+      <div>
+        <div>itinglife</div>
+        <div>
+          <a href="/">首页</a>
+          <a href="/tech">技术分享</a>
+          <a href="/life">生活分享</a>
+          <a href="/about">关于</a>
+          <a href="/contact">联系我们</a>
+          <a href="/admin">后台管理</a>
         </div>
       </div>
-    </nav>
-    <main class="main-content">
+    </header>
+    <main>
       <router-view />
     </main>
   </div>
@@ -25,93 +25,68 @@ export default {
 }
 </script>
 
-<style scoped>
-#app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
 }
 
-.navbar {
+header {
   background: #fff;
   border-bottom: 1px solid #e1e5e9;
-  padding: 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  padding: 15px 0;
 }
 
-.nav-container {
+header > div {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  height: 60px;
 }
 
-.nav-brand {
+header > div > div:first-child {
   font-size: 20px;
   font-weight: bold;
   color: #2c3e50;
 }
 
-.nav-links {
+header > div > div:last-child {
   display: flex;
   gap: 30px;
 }
 
-.nav-link {
+header a {
   text-decoration: none;
   color: #6c757d;
   font-size: 14px;
   padding: 8px 0;
   transition: color 0.3s ease;
-  position: relative;
 }
 
-.nav-link:hover {
+header a:hover {
   color: #007bff;
 }
 
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #007bff;
-  transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-
-.main-content {
-  flex: 1;
+main {
   padding: 40px 20px;
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
-  .nav-container {
+  header > div {
     flex-direction: column;
-    height: auto;
-    padding: 15px 20px;
+    gap: 15px;
   }
   
-  .nav-links {
-    margin-top: 15px;
+  header > div > div:last-child {
     gap: 20px;
   }
   
-  .main-content {
+  main {
     padding: 20px;
   }
 }
