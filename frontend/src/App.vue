@@ -2,12 +2,12 @@
   <div id="app">
     <header class="header">
       <div class="nav-container">
-        <div class="nav-item" @click="goTo('/')">首页</div>
-        <div class="nav-item" @click="goTo('/tech')">技术分享</div>
-        <div class="nav-item" @click="goTo('/life')">生活分享</div>
-        <div class="nav-item" @click="goTo('/about')">关于</div>
-        <div class="nav-item" @click="goTo('/contact')">联系我们</div>
-        <div class="nav-item" @click="goTo('/admin')">后台管理</div>
+        <router-link to="/" class="nav-item">首页</router-link>
+        <router-link to="/tech" class="nav-item">技术分享</router-link>
+        <router-link to="/life" class="nav-item">生活分享</router-link>
+        <router-link to="/about" class="nav-item">关于</router-link>
+        <router-link to="/contact" class="nav-item">联系我们</router-link>
+        <router-link to="/admin" class="nav-item">后台管理</router-link>
       </div>
     </header>
     <main class="main">
@@ -17,21 +17,8 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router'
-
 export default {
-  name: 'App',
-  setup() {
-    const router = useRouter()
-    
-    const goTo = (path) => {
-      router.push(path)
-    }
-    
-    return {
-      goTo
-    }
-  }
+  name: 'App'
 }
 </script>
 
@@ -71,6 +58,11 @@ export default {
 
 .nav-item:hover {
   color: #409eff;
+}
+
+.nav-item.router-link-active {
+  color: #409eff;
+  border-bottom: 2px solid #409eff;
 }
 
 .main {
