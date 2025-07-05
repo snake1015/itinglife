@@ -1,4 +1,4 @@
-name: CI & Docker Build
+name: CI & Docker Build & Deploy to Cloudflare Pages
 
 on:
   push:
@@ -43,4 +43,12 @@ jobs:
           docker-compose up -d
       - name: Show running containers
         run: |
-          docker ps 
+          docker ps
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: itinglife-frontend
+          directory: frontend/dist
+          branch: main 
