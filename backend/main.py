@@ -3,13 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .database import init_db
 from .routers import user, article, category, comment, message, upload, banner
+from .config import settings
 import os
 
-app = FastAPI()
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    docs_url="/docs" if settings.DEBUG else None,
+    redoc_url="/redoc" if settings.DEBUG else None,
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
