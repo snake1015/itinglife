@@ -1,136 +1,467 @@
 <template>
-  <div>
-    <el-row :gutter="20">
-      <el-col :span="18">
-        <el-card>
-          <div class="flex-between">
-            <el-select v-model="selectedCategory" placeholder="选择分类" @change="fetchArticles">
-              <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
-            </el-select>
-            <el-input v-model="searchTag" placeholder="标签搜索" style="width:200px" @change="fetchArticles" />
+  <div class="tech-page">
+    <div class="page-header">
+      <h1 class="page-title">技术分享</h1>
+      <p class="page-subtitle">分享编程经验、技术心得和项目实践</p>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="sidebar">
+        <div class="filter-section">
+          <h3>分类筛选</h3>
+          <div class="filter-options">
+            <button 
+              v-for="category in categories" 
+              :key="category.id"
+              :class="['filter-btn', { active: selectedCategory === category.id }]"
+              @click="selectCategory(category.id)"
+            >
+              {{ category.name }}
+            </button>
           </div>
-          <el-tag v-for="tag in tagCloud" :key="tag" class="tag" @click="handleTagClick(tag)">{{ tag }}</el-tag>
-          <el-divider>文章列表</el-divider>
-          <el-list>
-            <el-list-item v-for="a in articles" :key="a.id" @click="viewArticle(a.id)">
-              <div class="title">{{ a.title }} <el-tag v-if="a.is_featured" type="success">精华</el-tag></div>
-              <div class="summary">{{ a.summary }}</div>
-              <div class="meta">分类: {{ getCategoryName(a.category_id) }} | 标签: {{ a.tags }}</div>
-            </el-list-item>
-          </el-list>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card>
-          <div>标签云：</div>
-          <el-tag v-for="tag in tagCloud" :key="tag" class="tag" @click="handleTagClick(tag)">{{ tag }}</el-tag>
-        </el-card>
-        <el-card class="mt">
-          <div>精华文章：</div>
-          <ul>
-            <li v-for="a in featured" :key="a.id" @click="viewArticle(a.id)">{{ a.title }}</li>
-          </ul>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-dialog v-model="showDetail" width="60%">
-      <template #header> {{ detail.title }} </template>
-      <v-md-preview :text="detail.content || ''" />
-      <el-divider>评论区</el-divider>
-      <div v-for="c in comments" :key="c.id" class="comment">{{ c.content }}</div>
-      <el-input v-model="newComment" placeholder="写下你的评论..." />
-      <el-button type="primary" @click="submitComment">提交评论</el-button>
-    </el-dialog>
+        </div>
+
+        <div class="tag-section">
+          <h3>标签云</h3>
+          <div class="tag-cloud">
+            <span 
+              v-for="tag in tagCloud" 
+              :key="tag"
+              :class="['tag', { active: selectedTag === tag }]"
+              @click="selectTag(tag)"
+            >
+              {{ tag }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="articles-grid">
+          <article 
+            v-for="article in filteredArticles" 
+            :key="article.id" 
+            class="article-card"
+            @click="viewArticle(article)"
+          >
+            <div class="article-header">
+              <span class="article-category">{{ getCategoryName(article.category_id) }}</span>
+              <span class="article-date">{{ formatDate(article.created_at) }}</span>
+            </div>
+            <h3 class="article-title">{{ article.title }}</h3>
+            <p class="article-excerpt">{{ article.summary }}</p>
+            <div class="article-tags">
+              <span 
+                v-for="tag in article.tags" 
+                :key="tag" 
+                class="article-tag"
+              >
+                {{ tag }}
+              </span>
+            </div>
+            <div class="article-meta">
+              <span class="views">👁 {{ article.views || 0 }}</span>
+              <span class="likes">❤ {{ article.likes || 0 }}</span>
+            </div>
+          </article>
+        </div>
+
+        <div v-if="filteredArticles.length === 0" class="empty-state">
+          <div class="empty-icon">📝</div>
+          <h3>暂无内容</h3>
+          <p>当前筛选条件下暂无文章，请尝试其他分类或标签</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 文章详情弹窗 -->
+    <div v-if="showArticleDetail" class="modal-overlay" @click="closeArticleDetail">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>{{ selectedArticle.title }}</h2>
+          <button class="close-btn" @click="closeArticleDetail">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="article-meta-info">
+            <span class="meta-item">分类：{{ getCategoryName(selectedArticle.category_id) }}</span>
+            <span class="meta-item">发布时间：{{ formatDate(selectedArticle.created_at) }}</span>
+            <span class="meta-item">浏览量：{{ selectedArticle.views || 0 }}</span>
+          </div>
+          <div class="article-content" v-html="selectedArticle.content"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-<script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-import VMdPreview from '@kangc/v-md-editor/lib/preview';
-import githubTheme from '@kangc/v-md-editor-theme-github';
-import '@kangc/v-md-editor/lib/style/preview.css';
-import '@kangc/v-md-editor-theme-github/lib/theme.css';
-VMdPreview.use(githubTheme);
 
-const articles = ref([]);
-const categories = ref([]);
-const tagCloud = ref([]);
-const featured = ref([]);
-const selectedCategory = ref();
-const searchTag = ref('');
-const showDetail = ref(false);
-const detail = ref({});
-const comments = ref([]);
-const newComment = ref('');
-
-function getCategoryName(id) {
-  const cat = categories.value.find(c => c.id === id);
-  return cat ? cat.name : '';
-}
-
-function fetchArticles() {
-  axios.get('http://localhost:8000/api/articles', {
-    params: {
-      category_id: selectedCategory.value,
-      tag: searchTag.value
+<script>
+export default {
+  name: 'Tech',
+  data() {
+    return {
+      articles: [
+        {
+          id: 1,
+          title: 'Vue.js 3.0 Composition API 深度解析',
+          summary: '深入探讨Vue 3.0的Composition API，包括响应式系统、生命周期钩子等核心概念...',
+          content: '<h2>Vue.js 3.0 Composition API 深度解析</h2><p>Vue 3.0带来了全新的Composition API，这是一个革命性的改变...</p>',
+          category_id: 1,
+          tags: ['Vue.js', '前端', 'JavaScript'],
+          created_at: '2024-01-15T10:00:00Z',
+          views: 1250,
+          likes: 89
+        },
+        {
+          id: 2,
+          title: 'TypeScript 高级类型系统详解',
+          summary: '探索TypeScript的高级类型特性，包括条件类型、映射类型、模板字面量类型等...',
+          content: '<h2>TypeScript 高级类型系统详解</h2><p>TypeScript的类型系统非常强大，让我们深入了解一下...</p>',
+          category_id: 2,
+          tags: ['TypeScript', '类型系统', 'JavaScript'],
+          created_at: '2024-01-12T14:30:00Z',
+          views: 980,
+          likes: 67
+        },
+        {
+          id: 3,
+          title: '现代前端工程化实践指南',
+          summary: '从构建工具到部署流程，全面介绍现代前端项目的工程化实践...',
+          content: '<h2>现代前端工程化实践指南</h2><p>前端工程化是现代开发不可或缺的一部分...</p>',
+          category_id: 3,
+          tags: ['工程化', 'Webpack', 'Vite'],
+          created_at: '2024-01-10T09:15:00Z',
+          views: 1560,
+          likes: 112
+        }
+      ],
+      categories: [
+        { id: 1, name: '前端开发' },
+        { id: 2, name: '后端技术' },
+        { id: 3, name: '工程化' },
+        { id: 4, name: '数据库' }
+      ],
+      selectedCategory: null,
+      selectedTag: null,
+      showArticleDetail: false,
+      selectedArticle: {}
     }
-  }).then(res => {
-    articles.value = res.data;
-    // 生成标签云
-    const tags = new Set();
-    res.data.forEach(a => a.tags && a.tags.split(',').forEach(t => tags.add(t.trim())));
-    tagCloud.value = Array.from(tags);
-  });
+  },
+  computed: {
+    tagCloud() {
+      const tags = new Set()
+      this.articles.forEach(article => {
+        article.tags.forEach(tag => tags.add(tag))
+      })
+      return Array.from(tags)
+    },
+    filteredArticles() {
+      let filtered = this.articles
+      
+      if (this.selectedCategory) {
+        filtered = filtered.filter(article => article.category_id === this.selectedCategory)
+      }
+      
+      if (this.selectedTag) {
+        filtered = filtered.filter(article => article.tags.includes(this.selectedTag))
+      }
+      
+      return filtered
+    }
+  },
+  methods: {
+    selectCategory(categoryId) {
+      this.selectedCategory = this.selectedCategory === categoryId ? null : categoryId
+    },
+    selectTag(tag) {
+      this.selectedTag = this.selectedTag === tag ? null : tag
+    },
+    getCategoryName(categoryId) {
+      const category = this.categories.find(c => c.id === categoryId)
+      return category ? category.name : '未分类'
+    },
+    formatDate(dateString) {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('zh-CN')
+    },
+    viewArticle(article) {
+      this.selectedArticle = article
+      this.showArticleDetail = true
+    },
+    closeArticleDetail() {
+      this.showArticleDetail = false
+      this.selectedArticle = {}
+    }
+  }
 }
-function fetchCategories() {
-  axios.get('http://localhost:8000/api/categories').then(res => {
-    categories.value = res.data;
-  });
-}
-function fetchFeatured() {
-  axios.get('http://localhost:8000/api/articles', { params: { is_featured: true } }).then(res => {
-    featured.value = res.data;
-  });
-}
-function viewArticle(id) {
-  axios.get(`http://localhost:8000/api/articles/${id}`).then(res => {
-    detail.value = res.data;
-    showDetail.value = true;
-    fetchComments(id);
-  });
-}
-function fetchComments(article_id) {
-  axios.get('http://localhost:8000/api/comments', { params: { article_id } }).then(res => {
-    comments.value = res.data;
-  });
-}
-function handleTagClick(tag) {
-  searchTag.value = tag;
-  fetchArticles();
+</script>
+
+<style scoped>
+.tech-page {
+  min-height: 100vh;
 }
 
-function submitComment() {
-  axios.post('http://localhost:8000/api/comments', {
-    content: newComment.value,
-    article_id: detail.value.id,
-    user_id: 1 // TODO: 替换为当前登录用户
-  }).then(() => {
-    newComment.value = '';
-    fetchComments(detail.value.id);
-  });
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
 }
-onMounted(() => {
-  fetchCategories();
-  fetchArticles();
-  fetchFeatured();
-});
-</script>
-<style scoped>
-.mt { margin-top: 20px; }
-.flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.tag { margin: 0 4px 4px 0; cursor: pointer; }
-.title { font-weight: bold; font-size: 18px; }
-.summary { color: #888; }
-.meta { font-size: 12px; color: #aaa; }
-.comment { margin: 8px 0; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.content-wrapper {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.sidebar {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  height: fit-content;
+}
+
+.filter-section,
+.tag-section {
+  margin-bottom: 30px;
+}
+
+.filter-section h3,
+.tag-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-btn {
+  padding: 10px 15px;
+  border: none;
+  background: #f8f9fa;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.filter-btn:hover {
+  background: #e9ecef;
+}
+
+.filter-btn.active {
+  background: #007bff;
+  color: white;
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 5px 12px;
+  background: #f8f9fa;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tag:hover {
+  background: #e9ecef;
+}
+
+.tag.active {
+  background: #007bff;
+  color: white;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.article-card {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-5px);
+}
+
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.article-category {
+  background: #007bff;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+}
+
+.article-date {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.article-title {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  line-height: 1.4;
+}
+
+.article-excerpt {
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.article-tag {
+  padding: 3px 8px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.article-meta {
+  display: flex;
+  gap: 15px;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 10px;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.article-meta-info {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.article-content {
+  line-height: 1.8;
+  color: #2c3e50;
+}
+
+.article-content h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.article-content p {
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+  }
+  
+  .articles-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+}
 </style> 

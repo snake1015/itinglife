@@ -1,113 +1,302 @@
 <template>
-  <div>
-    <el-carousel height="200px" v-if="banners.length">
-      <el-carousel-item v-for="item in banners" :key="item.id">
-        <a v-if="item.link" :href="item.link" target="_blank">
-          <img :src="item.img" style="width:100%;height:200px;object-fit:cover;" />
-        </a>
-        <img v-else :src="item.img" style="width:100%;height:200px;object-fit:cover;" />
-      </el-carousel-item>
-    </el-carousel>
-    <el-card class="mt">今日推荐：<el-link v-if="today.id" @click="viewArticle(today.id)">{{ today.title }}</el-link></el-card>
-    <el-card class="mt">本月热门：<ul><li v-for="a in hot" :key="a.id"><el-link @click="viewArticle(a.id)">{{ a.title }}</el-link></li></ul></el-card>
-    <el-card class="mt">
-      <div class="flex-between">
-        <span>实用小工具</span>
-        <el-button size="small" @click="fetchWeather">刷新天气</el-button>
+  <div class="home">
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">欢迎来到 itinglife</h1>
+        <p class="hero-subtitle">分享技术，记录生活，连接世界</p>
+        <div class="hero-buttons">
+          <a href="/tech" class="btn btn-primary">技术分享</a>
+          <a href="/life" class="btn btn-secondary">生活记录</a>
+        </div>
       </div>
-      <div v-if="weather.city">{{ weather.city }}：{{ weather.weather }} {{ weather.temp }}℃</div>
-      <div v-else>天气信息加载中...</div>
-    </el-card>
-    <el-card class="mt">
-      <div>社区互动</div>
-      <div>最新评论：</div>
-      <ul><li v-for="c in comments" :key="c.id">{{ c.content }}</li></ul>
-      <div>最新留言：</div>
-      <ul><li v-for="m in messages" :key="m.id">{{ m.content }}</li></ul>
-    </el-card>
-    <el-dialog v-model="showDetail" width="60%">
-      <template #header> {{ detail.title }} </template>
-      <v-md-preview :text="detail.content || ''" />
-    </el-dialog>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2 class="section-title">功能特色</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3>技术分享</h3>
+            <p>分享编程经验、技术心得和项目实践</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🌱</div>
+            <h3>生活记录</h3>
+            <p>记录日常生活、旅行见闻和人生感悟</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3>社区交流</h3>
+            <p>与志同道合的朋友交流分享</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="latest-posts">
+      <div class="container">
+        <h2 class="section-title">最新内容</h2>
+        <div class="posts-grid">
+          <div class="post-card" v-for="post in latestPosts" :key="post.id">
+            <div class="post-header">
+              <span class="post-category">{{ post.category }}</span>
+              <span class="post-date">{{ post.date }}</span>
+            </div>
+            <h3 class="post-title">{{ post.title }}</h3>
+            <p class="post-excerpt">{{ post.excerpt }}</p>
+            <a :href="post.link" class="read-more">阅读更多</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
-<script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-import VMdPreview from '@kangc/v-md-editor/lib/preview';
-import githubTheme from '@kangc/v-md-editor-theme-github';
-import '@kangc/v-md-editor/lib/style/preview.css';
-import '@kangc/v-md-editor-theme-github/lib/theme.css';
-VMdPreview.use(githubTheme);
 
-const banners = ref([]);
-const today = ref({});
-const hot = ref([]);
-const comments = ref([]);
-const messages = ref([]);
-const weather = ref({});
-const showDetail = ref(false);
-const detail = ref({});
-
-function fetchBanners() {
-  axios.get('http://localhost:8000/api/banners').then(res => {
-    banners.value = res.data;
-  });
-}
-function fetchToday() {
-  axios.get('http://localhost:8000/api/articles', { params: { is_featured: true } }).then(res => {
-    today.value = res.data[0] || {};
-  });
-}
-function fetchHot() {
-  axios.get('http://localhost:8000/api/articles/hot').then(res => {
-    hot.value = res.data;
-  });
-}
-function fetchComments() {
-  axios.get('http://localhost:8000/api/comments').then(res => {
-    comments.value = res.data.slice(0, 5);
-  });
-}
-function fetchMessages() {
-  axios.get('http://localhost:8000/api/messages').then(res => {
-    messages.value = res.data.slice(0, 5);
-  });
-}
-function fetchWeather() {
-  // 示例：可用第三方天气API，这里用和风天气免费API（需替换key）
-  axios.get('https://devapi.qweather.com/v7/weather/now', {
-    params: {
-      location: '101010100', // 北京
-      key: 'demo-key' // 请替换为你自己的key
+<script>
+export default {
+  name: 'Home',
+  data() {
+    return {
+      latestPosts: [
+        {
+          id: 1,
+          title: 'Vue.js 3.0 新特性详解',
+          excerpt: '探索Vue.js 3.0带来的Composition API、性能提升等新特性...',
+          category: '技术分享',
+          date: '2024-01-15',
+          link: '/tech'
+        },
+        {
+          id: 2,
+          title: '我的编程学习之路',
+          excerpt: '分享从零开始学习编程的经历和心得体会...',
+          category: '生活记录',
+          date: '2024-01-10',
+          link: '/life'
+        },
+        {
+          id: 3,
+          title: '前端工程化实践',
+          excerpt: '探讨现代前端开发中的工程化工具和最佳实践...',
+          category: '技术分享',
+          date: '2024-01-05',
+          link: '/tech'
+        }
+      ]
     }
-  }).then(res => {
-    if (res.data && res.data.now) {
-      weather.value = {
-        city: '北京',
-        weather: res.data.now.text,
-        temp: res.data.now.temp
-      };
-    }
-  });
+  }
 }
-function viewArticle(id) {
-  axios.get(`http://localhost:8000/api/articles/${id}`).then(res => {
-    detail.value = res.data;
-    showDetail.value = true;
-  });
-}
-onMounted(() => {
-  fetchBanners();
-  fetchToday();
-  fetchHot();
-  fetchComments();
-  fetchMessages();
-  fetchWeather();
-});
 </script>
+
 <style scoped>
-.mt { margin-top: 20px; }
-.flex-between { display: flex; justify-content: space-between; align-items: center; }
-ul { margin: 0; padding-left: 20px; }
+.home {
+  min-height: 100vh;
+}
+
+.hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  animation: fadeInUp 1s ease;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+  animation: fadeInUp 1s ease 0.2s both;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  animation: fadeInUp 1s ease 0.4s both;
+}
+
+.btn {
+  padding: 12px 30px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: #667eea;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 60px;
+  color: #2c3e50;
+}
+
+.features {
+  padding: 80px 0;
+  background: #f8f9fa;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+}
+
+.feature-card {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.feature-card p {
+  color: #6c757d;
+  line-height: 1.6;
+}
+
+.latest-posts {
+  padding: 80px 0;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.post-card {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.post-category {
+  background: #007bff;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+}
+
+.post-date {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.post-title {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.post-excerpt {
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.read-more {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .features-grid,
+  .posts-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style> 
