@@ -9,7 +9,7 @@
             </el-select>
             <el-input v-model="searchTag" placeholder="标签搜索" style="width:200px" @change="fetchArticles" />
           </div>
-          <el-tag v-for="tag in tagCloud" :key="tag" class="tag" @click="searchTag=tag;fetchArticles()">{{ tag }}</el-tag>
+          <el-tag v-for="tag in tagCloud" :key="tag" class="tag" @click="handleTagClick(tag)">{{ tag }}</el-tag>
           <el-divider>文章列表</el-divider>
           <el-list>
             <el-list-item v-for="a in articles" :key="a.id" @click="viewArticle(a.id)">
@@ -23,7 +23,7 @@
       <el-col :span="6">
         <el-card>
           <div>标签云：</div>
-          <el-tag v-for="tag in tagCloud" :key="tag" class="tag" @click="searchTag=tag;fetchArticles()">{{ tag }}</el-tag>
+          <el-tag v-for="tag in tagCloud" :key="tag" class="tag" @click="handleTagClick(tag)">{{ tag }}</el-tag>
         </el-card>
         <el-card class="mt">
           <div>精华文章：</div>
@@ -104,6 +104,11 @@ function fetchComments(article_id) {
     comments.value = res.data;
   });
 }
+function handleTagClick(tag) {
+  searchTag.value = tag;
+  fetchArticles();
+}
+
 function submitComment() {
   axios.post('http://localhost:8000/api/comments', {
     content: newComment.value,
