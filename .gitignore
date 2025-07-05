@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# SQLite/数据库
+*.sqlite3
+data/
+backend/data/
+
+# 上传文件
+backend/static/uploads/
+
+# IDE/OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Log
+*.log 
