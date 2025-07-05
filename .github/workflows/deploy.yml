@@ -114,38 +114,38 @@ jobs:
           path: backend/
           retention-days: 1
 
-  # 前端部署到Cloudflare Pages（暂时禁用）
-  # deploy-frontend:
-  #   needs: [frontend-build-and-deploy]
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/main'
+  # 前端部署到Cloudflare Pages
+  deploy-frontend:
+    needs: [frontend-build-and-deploy]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     
-  #   steps:
-  #     - name: 检出代码
-  #       uses: actions/checkout@v4
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
       
-  #     - name: 下载前端构建产物
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: frontend-build
-  #         path: frontend/dist
+      - name: 下载前端构建产物
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/dist
           
-  #     - name: 部署到Cloudflare Pages
-  #       uses: cloudflare/pages-action@v1
-  #       with:
-  #         apiToken: ${{ secrets.CF_API_TOKEN }}
-  #         accountId: ${{ secrets.CF_ACCOUNT_ID }}
-  #         projectName: itinglife-frontend
-  #         directory: frontend/dist
-  #         branch: main
-  #         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: 部署到Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: itinglife-frontend
+          directory: frontend/dist
+          branch: main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           
-  #     - name: 前端部署状态
-  #       run: |
-  #         echo "✅ 前端已部署到Cloudflare Pages"
-  #         echo "🌐 网站地址: https://itinglife-frontend.pages.dev"
+      - name: 前端部署状态
+        run: |
+          echo "✅ 前端已部署到Cloudflare Pages"
+          echo "🌐 网站地址: https://itinglife-frontend.pages.dev"
 
-  # 后端部署到云服务器或容器平台
+  # 后端Docker镜像构建和推送到Docker Hub
   deploy-backend:
     needs: [backend-build-and-deploy]
     runs-on: ubuntu-latest
@@ -155,17 +155,30 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         
-      - name: 下载后端构建产物
-        uses: actions/download-artifact@v4
+      - name: 登录Docker Hub
+        uses: docker/login-action@v3
         with:
-          name: backend-build
-          path: backend/
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - name: 设置Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: 构建并推送后端镜像
+        run: |
+          echo "🔨 构建后端Docker镜像..."
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/itinglife-backend:latest ./backend
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/itinglife-backend:${{ github.sha }} ./backend
+          
+          echo "📤 推送到Docker Hub..."
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/itinglife-backend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/itinglife-backend:${{ github.sha }}
           
       - name: 后端部署状态
         run: |
-          echo "✅ 后端构建完成"
-          echo "🚀 后端已准备好部署"
-          echo "💡 请手动部署到你的服务器或容器平台"
+          echo "✅ 后端镜像已推送到Docker Hub"
+          echo "🐳 镜像地址: ${{ secrets.DOCKERHUB_USERNAME }}/itinglife-backend:latest"
+          echo "🔗 拉取命令: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/itinglife-backend:latest"
 
   # Docker镜像构建（可选）
   docker-build:

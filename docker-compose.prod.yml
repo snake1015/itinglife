@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ${DOCKERHUB_USERNAME:-your-username}/itinglife-backend:latest
+    container_name: itinglife-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./app.db
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key}
+      - DEBUG=false
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      - backend_data:/app/data
+    networks:
+      - itinglife-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: itinglife-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+    networks:
+      - itinglife-network
+
+volumes:
+  backend_data:
+    driver: local
+
+networks:
+  itinglife-network:
+    driver: bridge 
