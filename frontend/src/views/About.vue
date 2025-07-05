@@ -1,17 +1,14 @@
 <template>
   <div>
     <el-card>
-      <v-md-preview :text="aboutContent" />
+      <MdPreview :modelValue="aboutContent" />
     </el-card>
   </div>
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
-import VMdPreview from '@kangc/v-md-editor/lib/preview'
-import githubTheme from '@kangc/v-md-editor-theme-github'
-import '@kangc/v-md-editor/lib/style/preview.css'
-import '@kangc/v-md-editor-theme-github/lib/theme.css'
-VMdPreview.use(githubTheme)
+import { MdPreview } from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
 
 const aboutContent = ref('')
 

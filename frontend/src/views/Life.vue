@@ -30,11 +30,11 @@
         <el-dialog v-model="showEditor" width="70%">
           <template #header>{{ editId ? '编辑日志' : '新建日志' }}</template>
           <el-input v-model="form.title" placeholder="标题" class="mb" />
-          <v-md-editor
+          <MdEditor
             v-model="form.content"
-            height="300px"
-            :autofocus="true"
-            @upload-image="handleUploadImage"
+            :height="300"
+            :toolbars="toolbars"
+            @onUploadImg="handleUploadImage"
           />
           <el-input v-model="form.summary" placeholder="摘要" class="mb" />
           <el-button type="primary" @click="submitLog">保存</el-button>
@@ -68,7 +68,7 @@
     </el-row>
     <el-dialog v-model="showDetail" width="60%">
       <template #header> {{ detail.title }} </template>
-      <v-md-preview :text="detail.content || ''" />
+      <MdPreview :modelValue="detail.content || ''" />
       <el-divider>评论区</el-divider>
       <div v-for="c in comments" :key="c.id" class="comment">
         {{ c.content }}
@@ -81,14 +81,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import VMdEditor from '@kangc/v-md-editor'
-import VMdPreview from '@kangc/v-md-editor/lib/preview'
-import githubTheme from '@kangc/v-md-editor-theme-github'
-import '@kangc/v-md-editor/lib/style/base-editor.css'
-import '@kangc/v-md-editor/lib/style/preview.css'
-import '@kangc/v-md-editor-theme-github/lib/theme.css'
-VMdEditor.use(githubTheme)
-VMdPreview.use(githubTheme)
+import { MdEditor, MdPreview } from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
 
 const logs = ref([])
 const selectedDate = ref()
@@ -104,6 +98,34 @@ const mediaImages = ref([
   'https://placehold.co/100x100?text=Pic2',
 ])
 const mediaVideos = ref(['https://www.w3schools.com/html/mov_bbb.mp4'])
+
+// md-editor-v3 工具栏配置
+const toolbars = [
+  'bold',
+  'underline',
+  'italic',
+  'strikethrough',
+  'title',
+  'sub',
+  'sup',
+  'quote',
+  'unordered-list',
+  'ordered-list',
+  'task-list',
+  '-',
+  'code',
+  'code-block',
+  'link',
+  'image',
+  'table',
+  'mermaid',
+  'katex',
+  '-',
+  'preview',
+  'fullscreen',
+  'page-break',
+  'catalog'
+]
 
 function fetchLogs() {
   // 示例：可按日期筛选，实际应调用后端API
@@ -149,7 +171,7 @@ function submitLog() {
       fetchLogs()
     })
 }
-function handleUploadImage(event, insertImage, files) {
+function handleUploadImage(files, callback) {
   const file = files[0]
   const formData = new FormData()
   formData.append('file', file)
@@ -158,7 +180,7 @@ function handleUploadImage(event, insertImage, files) {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then(res => {
-      insertImage({ url: res.data.url })
+      callback([res.data.url])
     })
 }
 onMounted(() => {

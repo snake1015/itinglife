@@ -35,10 +35,10 @@
             />
           </el-select>
           <el-checkbox v-model="form.is_featured">精华</el-checkbox>
-          <v-md-editor
+          <MdEditor
             v-model="form.content"
-            height="400px"
-            :autofocus="true"
+            :height="400"
+            :toolbars="toolbars"
           />
           <el-input
             v-model="form.tags"
@@ -95,7 +95,7 @@
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="FAQ管理" name="faq">
-        <v-md-editor v-model="faqContent" height="300px" />
+        <MdEditor v-model="faqContent" :height="300" :toolbars="toolbars" />
         <el-button type="primary" class="mt" @click="saveFAQ"
           >保存FAQ</el-button
         >
@@ -149,11 +149,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import VMdEditor from '@kangc/v-md-editor'
-import githubTheme from '@kangc/v-md-editor-theme-github'
-import '@kangc/v-md-editor/lib/style/base-editor.css'
-import '@kangc/v-md-editor-theme-github/lib/theme.css'
-VMdEditor.use(githubTheme)
+import { MdEditor } from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
 
 const activeTab = ref('article')
 const articles = ref([])
@@ -174,6 +171,34 @@ const faqContent = ref('')
 const banners = ref([])
 const showBannerEditor = ref(false)
 const bannerForm = ref({ id: null, img: '', link: '' })
+
+// md-editor-v3 工具栏配置
+const toolbars = [
+  'bold',
+  'underline',
+  'italic',
+  'strikethrough',
+  'title',
+  'sub',
+  'sup',
+  'quote',
+  'unordered-list',
+  'ordered-list',
+  'task-list',
+  '-',
+  'code',
+  'code-block',
+  'link',
+  'image',
+  'table',
+  'mermaid',
+  'katex',
+  '-',
+  'preview',
+  'fullscreen',
+  'page-break',
+  'catalog'
+]
 
 function fetchArticles() {
   axios.get('http://localhost:8000/api/articles').then(res => {
