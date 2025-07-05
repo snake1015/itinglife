@@ -3,12 +3,12 @@
     <el-container style="min-height: 100vh;">
       <el-header>
         <nav class="navigation">
-          <a href="#" @click.prevent="navigateTo('/')" class="nav-item" :class="{ active: $route.path === '/' }">首页</a>
-          <a href="#" @click.prevent="navigateTo('/tech')" class="nav-item" :class="{ active: $route.path === '/tech' }">技术分享</a>
-          <a href="#" @click.prevent="navigateTo('/life')" class="nav-item" :class="{ active: $route.path === '/life' }">生活分享</a>
-          <a href="#" @click.prevent="navigateTo('/about')" class="nav-item" :class="{ active: $route.path === '/about' }">关于</a>
-          <a href="#" @click.prevent="navigateTo('/contact')" class="nav-item" :class="{ active: $route.path === '/contact' }">联系我们</a>
-          <a href="#" @click.prevent="navigateTo('/admin')" class="nav-item" :class="{ active: $route.path === '/admin' }">后台管理</a>
+          <a href="#" @click.prevent="navigateTo('/')" class="nav-item">首页</a>
+          <a href="#" @click.prevent="navigateTo('/tech')" class="nav-item">技术分享</a>
+          <a href="#" @click.prevent="navigateTo('/life')" class="nav-item">生活分享</a>
+          <a href="#" @click.prevent="navigateTo('/about')" class="nav-item">关于</a>
+          <a href="#" @click.prevent="navigateTo('/contact')" class="nav-item">联系我们</a>
+          <a href="#" @click.prevent="navigateTo('/admin')" class="nav-item">后台管理</a>
         </nav>
       </el-header>
       <el-main>
