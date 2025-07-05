@@ -6,11 +6,11 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
-    }
+      '@': resolve(__dirname, 'src'),
+    },
   },
   test: {
     environment: 'jsdom',
-    globals: true
-  }
-}) 
+    globals: true,
+  },
+})

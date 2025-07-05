@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
-    }
+      '@': resolve(__dirname, 'src'),
+    },
   },
   build: {
     outDir: 'dist',
@@ -18,17 +18,17 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['vue', 'vue-router', 'pinia'],
-          utils: ['axios']
-        }
-      }
-    }
+          utils: ['axios'],
+        },
+      },
+    },
   },
   server: {
     port: 3000,
-    host: true
+    host: true,
   },
   preview: {
     port: 4173,
-    host: true
-  }
-}) 
+    host: true,
+  },
+})

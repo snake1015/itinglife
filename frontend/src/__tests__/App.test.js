@@ -19,4 +19,4 @@ describe('App', () => {
     const routerView = wrapper.findComponent({ name: 'RouterView' })
     expect(routerView.exists()).toBe(true)
   })
-}) 
+})

@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
 }
 </script>
 
@@ -81,15 +81,13 @@ main {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   header > div > div:last-child {
     gap: 20px;
   }
-  
+
   main {
     padding: 20px;
   }
 }
 </style>
-
- 

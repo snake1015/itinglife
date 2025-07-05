@@ -65,7 +65,7 @@ export default {
           excerpt: '探索Vue.js 3.0带来的Composition API、性能提升等新特性...',
           category: '技术分享',
           date: '2024-01-15',
-          link: '/tech'
+          link: '/tech',
         },
         {
           id: 2,
@@ -73,7 +73,7 @@ export default {
           excerpt: '分享从零开始学习编程的经历和心得体会...',
           category: '生活记录',
           date: '2024-01-10',
-          link: '/life'
+          link: '/life',
         },
         {
           id: 3,
@@ -81,11 +81,11 @@ export default {
           excerpt: '探讨现代前端开发中的工程化工具和最佳实践...',
           category: '技术分享',
           date: '2024-01-05',
-          link: '/tech'
-        }
-      ]
+          link: '/tech',
+        },
+      ],
     }
-  }
+  },
 }
 </script>
 
@@ -186,7 +186,7 @@ export default {
   padding: 40px 30px;
   border-radius: 10px;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
@@ -224,7 +224,7 @@ export default {
   background: white;
   border-radius: 10px;
   padding: 30px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
@@ -288,15 +288,15 @@ export default {
   .hero-title {
     font-size: 2rem;
   }
-  
+
   .hero-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .features-grid,
   .posts-grid {
     grid-template-columns: 1fr;
   }
 }
-</style> 
+</style>
