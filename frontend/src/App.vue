@@ -2,12 +2,12 @@
   <div id="app">
     <header class="header">
       <div class="nav-container">
-        <router-link to="/" class="nav-item">首页</router-link>
-        <router-link to="/tech" class="nav-item">技术分享</router-link>
-        <router-link to="/life" class="nav-item">生活分享</router-link>
-        <router-link to="/about" class="nav-item">关于</router-link>
-        <router-link to="/contact" class="nav-item">联系我们</router-link>
-        <router-link to="/admin" class="nav-item">后台管理</router-link>
+        <a href="/" class="nav-item">首页</a>
+        <a href="/tech" class="nav-item">技术分享</a>
+        <a href="/life" class="nav-item">生活分享</a>
+        <a href="/about" class="nav-item">关于</a>
+        <a href="/contact" class="nav-item">联系我们</a>
+        <a href="/admin" class="nav-item">后台管理</a>
       </div>
     </header>
     <main class="main">
@@ -60,7 +60,7 @@ export default {
   color: #409eff;
 }
 
-.nav-item.router-link-active {
+.nav-item.active {
   color: #409eff;
   border-bottom: 2px solid #409eff;
 }
