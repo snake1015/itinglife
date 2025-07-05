@@ -1,0 +1,21 @@
+{
+  "name": "itinglife-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.0",
+    "vue-router": "^4.2.0",
+    "pinia": "^2.1.0",
+    "axios": "^1.6.0",
+    "element-plus": "^2.5.0",
+    "@kangc/v-md-editor": "^2.4.10",
+    "@kangc/v-md-editor-theme-github": "^2.4.10"
+  },
+  "devDependencies": {
+    "vite": "^4.4.0"
+  }
+} 
