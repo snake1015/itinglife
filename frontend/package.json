@@ -12,8 +12,8 @@
     "pinia": "^2.1.0",
     "axios": "^1.6.0",
     "element-plus": "^2.5.0",
-    "@kangc/v-md-editor": "^2.4.10",
-    "@kangc/v-md-editor-theme-github": "^2.4.10"
+    "@kangc/v-md-editor": "^2.3.18",
+    "@kangc/v-md-editor-theme-github": "^2.3.18"
   },
   "devDependencies": {
     "vite": "^4.4.0"
