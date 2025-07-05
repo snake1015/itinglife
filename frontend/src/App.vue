@@ -3,12 +3,12 @@
     <el-container style="min-height: 100vh;">
       <el-header>
         <nav class="navigation">
-          <router-link to="/" class="nav-item">首页</router-link>
-          <router-link to="/tech" class="nav-item">技术分享</router-link>
-          <router-link to="/life" class="nav-item">生活分享</router-link>
-          <router-link to="/about" class="nav-item">关于</router-link>
-          <router-link to="/contact" class="nav-item">联系我们</router-link>
-          <router-link to="/admin" class="nav-item">后台管理</router-link>
+          <a href="#" @click.prevent="navigateTo('/')" class="nav-item" :class="{ active: $route.path === '/' }">首页</a>
+          <a href="#" @click.prevent="navigateTo('/tech')" class="nav-item" :class="{ active: $route.path === '/tech' }">技术分享</a>
+          <a href="#" @click.prevent="navigateTo('/life')" class="nav-item" :class="{ active: $route.path === '/life' }">生活分享</a>
+          <a href="#" @click.prevent="navigateTo('/about')" class="nav-item" :class="{ active: $route.path === '/about' }">关于</a>
+          <a href="#" @click.prevent="navigateTo('/contact')" class="nav-item" :class="{ active: $route.path === '/contact' }">联系我们</a>
+          <a href="#" @click.prevent="navigateTo('/admin')" class="nav-item" :class="{ active: $route.path === '/admin' }">后台管理</a>
         </nav>
       </el-header>
       <el-main>
@@ -19,7 +19,13 @@
 </template>
 
 <script setup>
-// 空的setup，确保没有任何可能导致解析问题的代码
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+function navigateTo(path) {
+  router.push(path);
+}
 </script>
 
 <style scoped>
@@ -43,13 +49,14 @@
   color: #303133;
   font-size: 14px;
   transition: color 0.3s;
+  cursor: pointer;
 }
 
 .nav-item:hover {
   color: #409eff;
 }
 
-.nav-item.router-link-active {
+.nav-item.active {
   color: #409eff;
   border-bottom: 2px solid #409eff;
 }
