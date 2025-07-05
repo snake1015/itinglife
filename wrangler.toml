@@ -1,0 +1,13 @@
+[build]
+command = "npm run build"
+cwd = "frontend"
+
+[build.upload]
+format = "directory"
+dir = "frontend/dist"
+
+[env.production]
+name = "itinglife"
+
+[env.production.vars]
+NODE_ENV = "production" 

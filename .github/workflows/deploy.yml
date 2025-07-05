@@ -89,35 +89,35 @@ jobs:
           cd backend
           python -m pytest tests/ || echo "Backend tests completed"
 
-  deploy:
-    needs: [frontend-test-and-build, backend-test]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+  # deploy:
+  #   needs: [frontend-test-and-build, backend-test]
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main'
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Download frontend build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend/dist
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+      
+  #     - name: Download frontend build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: frontend-build
+  #         path: frontend/dist
           
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: itinglife-frontend
-          directory: frontend/dist
-          branch: main
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Deploy to Cloudflare Pages
+  #       uses: cloudflare/pages-action@v1
+  #       with:
+  #         apiToken: ${{ secrets.CF_API_TOKEN }}
+  #         accountId: ${{ secrets.CF_ACCOUNT_ID }}
+  #         projectName: itinglife
+  #         directory: frontend/dist
+  #         branch: main
+  #         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Deploy status
-        run: |
-          echo "✅ Frontend deployed to Cloudflare Pages"
-          echo "🌐 Site URL: https://itinglife-frontend.pages.dev"
+  #     - name: Deploy status
+  #       run: |
+  #         echo "✅ Frontend deployed to Cloudflare Pages"
+  #         echo "🌐 Site URL: https://itinglife.pages.dev"
           
   docker-build:
     needs: [frontend-test-and-build, backend-test]
@@ -138,11 +138,16 @@ jobs:
         
       - name: Build and test Docker images
         run: |
-          docker-compose build
-          docker-compose up -d
+          echo "🔨 Building Docker images..."
+          docker compose build
+          echo "🚀 Starting containers..."
+          docker compose up -d
+          echo "⏳ Waiting for services to start..."
           sleep 30
+          echo "📊 Container status:"
           docker ps
-          docker-compose down
+          echo "🧹 Cleaning up..."
+          docker compose down
           
       - name: Docker build status
         run: |
