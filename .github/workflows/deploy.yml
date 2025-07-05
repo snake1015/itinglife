@@ -114,36 +114,36 @@ jobs:
           path: backend/
           retention-days: 1
 
-  # 前端部署到Cloudflare Pages
-  deploy-frontend:
-    needs: [frontend-build-and-deploy]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+  # 前端部署到Cloudflare Pages（暂时禁用）
+  # deploy-frontend:
+  #   needs: [frontend-build-and-deploy]
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main'
     
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: 检出代码
+  #       uses: actions/checkout@v4
       
-      - name: 下载前端构建产物
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend/dist
+  #     - name: 下载前端构建产物
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: frontend-build
+  #         path: frontend/dist
           
-      - name: 部署到Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: itinglife-frontend
-          directory: frontend/dist
-          branch: main
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: 部署到Cloudflare Pages
+  #       uses: cloudflare/pages-action@v1
+  #       with:
+  #         apiToken: ${{ secrets.CF_API_TOKEN }}
+  #         accountId: ${{ secrets.CF_ACCOUNT_ID }}
+  #         projectName: itinglife-frontend
+  #         directory: frontend/dist
+  #         branch: main
+  #         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: 前端部署状态
-        run: |
-          echo "✅ 前端已部署到Cloudflare Pages"
-          echo "🌐 网站地址: https://itinglife-frontend.pages.dev"
+  #     - name: 前端部署状态
+  #       run: |
+  #         echo "✅ 前端已部署到Cloudflare Pages"
+  #         echo "🌐 网站地址: https://itinglife-frontend.pages.dev"
 
   # 后端部署到云服务器或容器平台
   deploy-backend:

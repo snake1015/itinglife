@@ -38,3 +38,4 @@ describe('App', () => {
     expect(routerView.exists()).toBe(true)
   })
 })
+ 
