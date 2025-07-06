@@ -8,7 +8,7 @@ const routes = [
   { path: '/contact', component: () => import('../views/Contact.vue') },
   { 
     path: '/admin', 
-    component: () => import('../views/AdminTest.vue'),
+    component: () => import('../views/Admin.vue'),
     meta: { requiresAuth: true }
   },
   { path: '/login', component: () => import('../views/Login.vue') },
