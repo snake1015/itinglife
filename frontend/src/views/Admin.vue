@@ -28,32 +28,54 @@
       <el-tabs v-model="activeTab" class="admin-tabs">
         <!-- 文章管理 -->
         <el-tab-pane label="文章管理" name="article">
-          <el-button type="primary" @click="showEditor = true">新建文章</el-button>
+          <el-button type="primary" @click="showEditor = true"
+            >新建文章</el-button
+          >
           <el-table :data="articles" style="width: 100%" class="mt">
             <el-table-column prop="title" label="标题" />
             <el-table-column prop="category_id" label="分类" />
             <el-table-column prop="is_featured" label="精华" />
             <el-table-column label="操作">
               <template #default="scope">
-                <el-button size="small" @click="editArticle(scope.row)">编辑</el-button>
-                <el-button size="small" type="danger" @click="deleteArticle(scope.row.id)">删除</el-button>
+                <el-button size="small" @click="editArticle(scope.row)"
+                  >编辑</el-button
+                >
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="deleteArticle(scope.row.id)"
+                  >删除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
-          
+
           <el-dialog v-model="showEditor" width="70%">
             <template #header>{{ editId ? '编辑文章' : '新建文章' }}</template>
             <el-input v-model="form.title" placeholder="标题" class="mb" />
             <el-select v-model="form.category_id" placeholder="分类" class="mb">
-              <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
+              <el-option
+                v-for="cat in categories"
+                :key="cat.id"
+                :label="cat.name"
+                :value="cat.id"
+              />
             </el-select>
             <el-checkbox v-model="form.is_featured">精华</el-checkbox>
-            <MdEditor v-model="form.content" :height="400" :toolbars="toolbars" />
-            <el-input v-model="form.tags" placeholder="标签（逗号分隔）" class="mb" />
+            <MdEditor
+              v-model="form.content"
+              :height="400"
+              :toolbars="toolbars"
+            />
+            <el-input
+              v-model="form.tags"
+              placeholder="标签（逗号分隔）"
+              class="mb"
+            />
             <el-button type="primary" @click="submitArticle">保存</el-button>
           </el-dialog>
         </el-tab-pane>
-        
+
         <!-- 分类管理 -->
         <el-tab-pane label="分类管理" name="category">
           <el-input v-model="newCategory" placeholder="新分类名" class="mb" />
@@ -62,12 +84,17 @@
             <el-table-column prop="name" label="分类名" />
             <el-table-column label="操作">
               <template #default="scope">
-                <el-button size="small" type="danger" @click="deleteCategory(scope.row.id)">删除</el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="deleteCategory(scope.row.id)"
+                  >删除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        
+
         <!-- 用户管理 -->
         <el-tab-pane label="用户管理" name="user">
           <el-table :data="users" style="width: 100%" class="mt">
@@ -75,7 +102,7 @@
             <el-table-column prop="email" label="邮箱" />
           </el-table>
         </el-tab-pane>
-        
+
         <!-- 统计分析 -->
         <el-tab-pane label="统计分析" name="stat">
           <div class="stat-cards">
@@ -97,7 +124,7 @@
             </el-card>
           </div>
         </el-tab-pane>
-        
+
         <!-- 留言管理 -->
         <el-tab-pane label="留言管理" name="message">
           <el-table :data="messages" style="width: 100%" class="mt">
@@ -106,16 +133,23 @@
             <el-table-column prop="created_at" label="时间" />
             <el-table-column label="操作">
               <template #default="scope">
-                <el-button size="small" type="danger" @click="deleteMessage(scope.row.id)">删除</el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="deleteMessage(scope.row.id)"
+                  >删除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        
+
         <!-- FAQ管理 -->
         <el-tab-pane label="FAQ管理" name="faq">
           <MdEditor v-model="faqContent" :height="300" :toolbars="toolbars" />
-          <el-button type="primary" class="mt" @click="saveFAQ">保存FAQ</el-button>
+          <el-button type="primary" class="mt" @click="saveFAQ"
+            >保存FAQ</el-button
+          >
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -151,11 +185,24 @@ const form = ref({
 })
 
 const toolbars = [
-  'bold', 'italic', 'strikethrough', '|',
-  'title', 'quote', 'code', '|',
-  'ul', 'ol', 'task', '|',
-  'link', 'image', 'table', '|',
-  'preview', 'fullscreen'
+  'bold',
+  'italic',
+  'strikethrough',
+  '|',
+  'title',
+  'quote',
+  'code',
+  '|',
+  'ul',
+  'ol',
+  'task',
+  '|',
+  'link',
+  'image',
+  'table',
+  '|',
+  'preview',
+  'fullscreen',
 ]
 
 const currentUser = computed(() => {
@@ -165,39 +212,51 @@ const currentUser = computed(() => {
 
 // 数据获取函数
 function fetchArticles() {
-  axios.get(getApiUrl('/api/articles')).then(res => {
-    articles.value = res.data
-  }).catch(err => {
-    console.error('获取文章失败:', err)
-    ElMessage.error('获取文章失败')
-  })
+  axios
+    .get(getApiUrl('/api/articles'))
+    .then(res => {
+      articles.value = res.data
+    })
+    .catch(err => {
+      console.error('获取文章失败:', err)
+      ElMessage.error('获取文章失败')
+    })
 }
 
 function fetchCategories() {
-  axios.get(getApiUrl('/api/categories')).then(res => {
-    categories.value = res.data
-  }).catch(err => {
-    console.error('获取分类失败:', err)
-    ElMessage.error('获取分类失败')
-  })
+  axios
+    .get(getApiUrl('/api/categories'))
+    .then(res => {
+      categories.value = res.data
+    })
+    .catch(err => {
+      console.error('获取分类失败:', err)
+      ElMessage.error('获取分类失败')
+    })
 }
 
 function fetchUsers() {
-  axios.get(getApiUrl('/api/users')).then(res => {
-    users.value = res.data
-  }).catch(err => {
-    console.error('获取用户失败:', err)
-    ElMessage.error('获取用户失败')
-  })
+  axios
+    .get(getApiUrl('/api/users'))
+    .then(res => {
+      users.value = res.data
+    })
+    .catch(err => {
+      console.error('获取用户失败:', err)
+      ElMessage.error('获取用户失败')
+    })
 }
 
 function fetchMessages() {
-  axios.get(getApiUrl('/api/messages')).then(res => {
-    messages.value = res.data
-  }).catch(err => {
-    console.error('获取留言失败:', err)
-    ElMessage.error('获取留言失败')
-  })
+  axios
+    .get(getApiUrl('/api/messages'))
+    .then(res => {
+      messages.value = res.data
+    })
+    .catch(err => {
+      console.error('获取留言失败:', err)
+      ElMessage.error('获取留言失败')
+    })
 }
 
 // 文章相关功能
@@ -209,24 +268,42 @@ function editArticle(row) {
 
 function submitArticle() {
   if (editId.value) {
-    axios.put(getApiUrl(`/api/articles/${editId.value}`), form.value).then(() => {
-      showEditor.value = false
-      editId.value = null
-      form.value = { title: '', content: '', category_id: '', tags: '', is_featured: false }
-      fetchArticles()
-      ElMessage.success('文章更新成功')
-    }).catch(err => {
-      ElMessage.error('更新文章失败')
-    })
+    axios
+      .put(getApiUrl(`/api/articles/${editId.value}`), form.value)
+      .then(() => {
+        showEditor.value = false
+        editId.value = null
+        form.value = {
+          title: '',
+          content: '',
+          category_id: '',
+          tags: '',
+          is_featured: false,
+        }
+        fetchArticles()
+        ElMessage.success('文章更新成功')
+      })
+      .catch(() => {
+        ElMessage.error('更新文章失败')
+      })
   } else {
-    axios.post(getApiUrl('/api/articles'), form.value).then(() => {
-      showEditor.value = false
-      form.value = { title: '', content: '', category_id: '', tags: '', is_featured: false }
-      fetchArticles()
-      ElMessage.success('文章创建成功')
-    }).catch(err => {
-      ElMessage.error('创建文章失败')
-    })
+    axios
+      .post(getApiUrl('/api/articles'), form.value)
+      .then(() => {
+        showEditor.value = false
+        form.value = {
+          title: '',
+          content: '',
+          category_id: '',
+          tags: '',
+          is_featured: false,
+        }
+        fetchArticles()
+        ElMessage.success('文章创建成功')
+      })
+      .catch(() => {
+        ElMessage.error('创建文章失败')
+      })
   }
 }
 
@@ -236,12 +313,15 @@ function deleteArticle(id) {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(() => {
-    axios.delete(getApiUrl(`/api/articles/${id}`)).then(() => {
-      fetchArticles()
-      ElMessage.success('删除成功')
-    }).catch(err => {
-      ElMessage.error('删除失败')
-    })
+    axios
+      .delete(getApiUrl(`/api/articles/${id}`))
+      .then(() => {
+        fetchArticles()
+        ElMessage.success('删除成功')
+      })
+      .catch(() => {
+        ElMessage.error('删除失败')
+      })
   })
 }
 
@@ -251,13 +331,16 @@ function addCategory() {
     ElMessage.warning('请输入分类名')
     return
   }
-  axios.post(getApiUrl('/api/categories'), { name: newCategory.value }).then(() => {
-    newCategory.value = ''
-    fetchCategories()
-    ElMessage.success('分类添加成功')
-  }).catch(err => {
-    ElMessage.error('添加分类失败')
-  })
+  axios
+    .post(getApiUrl('/api/categories'), { name: newCategory.value })
+    .then(() => {
+      newCategory.value = ''
+      fetchCategories()
+      ElMessage.success('分类添加成功')
+    })
+    .catch(() => {
+      ElMessage.error('添加分类失败')
+    })
 }
 
 function deleteCategory(id) {
@@ -266,12 +349,15 @@ function deleteCategory(id) {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(() => {
-    axios.delete(getApiUrl(`/api/categories/${id}`)).then(() => {
-      fetchCategories()
-      ElMessage.success('删除成功')
-    }).catch(err => {
-      ElMessage.error('删除失败')
-    })
+    axios
+      .delete(getApiUrl(`/api/categories/${id}`))
+      .then(() => {
+        fetchCategories()
+        ElMessage.success('删除成功')
+      })
+      .catch(() => {
+        ElMessage.error('删除失败')
+      })
   })
 }
 
@@ -282,12 +368,15 @@ function deleteMessage(id) {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(() => {
-    axios.delete(getApiUrl(`/api/messages/${id}`)).then(() => {
-      fetchMessages()
-      ElMessage.success('删除成功')
-    }).catch(err => {
-      ElMessage.error('删除失败')
-    })
+    axios
+      .delete(getApiUrl(`/api/messages/${id}`))
+      .then(() => {
+        fetchMessages()
+        ElMessage.success('删除成功')
+      })
+      .catch(() => {
+        ElMessage.error('删除失败')
+      })
   })
 }
 
@@ -321,14 +410,16 @@ function logout() {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
-  }).then(() => {
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
-    ElMessage.success('已退出登录')
-    router.push('/login')
-  }).catch(() => {
-    // 用户取消
   })
+    .then(() => {
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      ElMessage.success('已退出登录')
+      router.push('/login')
+    })
+    .catch(() => {
+      // 用户取消
+    })
 }
 
 onMounted(() => {
@@ -337,7 +428,7 @@ onMounted(() => {
     router.push('/login')
     return
   }
-  
+
   fetchArticles()
   fetchCategories()
   fetchUsers()
@@ -450,21 +541,21 @@ onMounted(() => {
   .admin-header {
     padding: 0 16px;
   }
-  
+
   .admin-title {
     font-size: 1.2rem;
   }
-  
+
   .admin-content {
     padding: 16px;
   }
-  
+
   .admin-tabs {
     padding: 16px;
   }
-  
+
   .stat-cards {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-</style> 
+</style>

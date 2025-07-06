@@ -6,28 +6,28 @@
           <h1 class="login-title">itinglife</h1>
           <p class="login-subtitle">后台管理系统</p>
         </div>
-        
+
         <el-tabs v-model="tab" class="login-tabs">
           <el-tab-pane label="登录" name="login">
-            <el-form 
-              :model="loginForm" 
+            <el-form
+              :model="loginForm"
               :rules="loginRules"
               ref="loginFormRef"
               @submit.prevent="login"
               class="login-form"
             >
               <el-form-item prop="username">
-                <el-input 
-                  v-model="loginForm.username" 
+                <el-input
+                  v-model="loginForm.username"
                   placeholder="请输入用户名"
                   prefix-icon="User"
                   size="large"
                 />
               </el-form-item>
               <el-form-item prop="password">
-                <el-input 
-                  v-model="loginForm.password" 
-                  type="password" 
+                <el-input
+                  v-model="loginForm.password"
+                  type="password"
                   placeholder="请输入密码"
                   prefix-icon="Lock"
                   size="large"
@@ -35,9 +35,9 @@
                 />
               </el-form-item>
               <el-form-item>
-                <el-button 
-                  type="primary" 
-                  @click="login" 
+                <el-button
+                  type="primary"
+                  @click="login"
                   :loading="loginLoading"
                   size="large"
                   class="login-button"
@@ -47,35 +47,35 @@
               </el-form-item>
             </el-form>
           </el-tab-pane>
-          
+
           <el-tab-pane label="注册" name="register">
-            <el-form 
-              :model="registerForm" 
+            <el-form
+              :model="registerForm"
               :rules="registerRules"
               ref="registerFormRef"
               @submit.prevent="register"
               class="login-form"
             >
               <el-form-item prop="username">
-                <el-input 
-                  v-model="registerForm.username" 
+                <el-input
+                  v-model="registerForm.username"
                   placeholder="请输入用户名"
                   prefix-icon="User"
                   size="large"
                 />
               </el-form-item>
               <el-form-item prop="email">
-                <el-input 
-                  v-model="registerForm.email" 
+                <el-input
+                  v-model="registerForm.email"
                   placeholder="请输入邮箱"
                   prefix-icon="Message"
                   size="large"
                 />
               </el-form-item>
               <el-form-item prop="password">
-                <el-input 
-                  v-model="registerForm.password" 
-                  type="password" 
+                <el-input
+                  v-model="registerForm.password"
+                  type="password"
                   placeholder="请输入密码"
                   prefix-icon="Lock"
                   size="large"
@@ -83,9 +83,9 @@
                 />
               </el-form-item>
               <el-form-item prop="confirmPassword">
-                <el-input 
-                  v-model="registerForm.confirmPassword" 
-                  type="password" 
+                <el-input
+                  v-model="registerForm.confirmPassword"
+                  type="password"
                   placeholder="请确认密码"
                   prefix-icon="Lock"
                   size="large"
@@ -93,9 +93,9 @@
                 />
               </el-form-item>
               <el-form-item>
-                <el-button 
-                  type="primary" 
-                  @click="register" 
+                <el-button
+                  type="primary"
+                  @click="register"
                   :loading="registerLoading"
                   size="large"
                   class="login-button"
@@ -106,7 +106,7 @@
             </el-form>
           </el-tab-pane>
         </el-tabs>
-        
+
         <div class="login-footer">
           <p class="footer-text">© 2024 itinglife. All rights reserved.</p>
         </div>
@@ -128,16 +128,16 @@ const registerFormRef = ref()
 const loginLoading = ref(false)
 const registerLoading = ref(false)
 
-const loginForm = reactive({ 
-  username: '', 
-  password: '' 
+const loginForm = reactive({
+  username: '',
+  password: '',
 })
 
-const registerForm = reactive({ 
-  username: '', 
-  email: '', 
-  password: '', 
-  confirmPassword: '' 
+const registerForm = reactive({
+  username: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
 })
 
 const router = useRouter()
@@ -146,26 +146,36 @@ const router = useRouter()
 const loginRules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度在 3 到 20 个字符', trigger: 'blur' }
+    {
+      min: 3,
+      max: 20,
+      message: '用户名长度在 3 到 20 个字符',
+      trigger: 'blur',
+    },
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能少于 6 个字符', trigger: 'blur' }
-  ]
+    { min: 6, message: '密码长度不能少于 6 个字符', trigger: 'blur' },
+  ],
 }
 
 const registerRules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度在 3 到 20 个字符', trigger: 'blur' }
+    {
+      min: 3,
+      max: 20,
+      message: '用户名长度在 3 到 20 个字符',
+      trigger: 'blur',
+    },
   ],
   email: [
     { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能少于 6 个字符', trigger: 'blur' }
+    { min: 6, message: '密码长度不能少于 6 个字符', trigger: 'blur' },
   ],
   confirmPassword: [
     { required: true, message: '请确认密码', trigger: 'blur' },
@@ -177,24 +187,24 @@ const registerRules = {
           callback()
         }
       },
-      trigger: 'blur'
-    }
-  ]
+      trigger: 'blur',
+    },
+  ],
 }
 
 async function login() {
   try {
     await loginFormRef.value.validate()
     loginLoading.value = true
-    
+
     const response = await axios.post(getApiUrl('/api/users/login'), {
       username: loginForm.username,
-      password: loginForm.password
+      password: loginForm.password,
     })
-    
+
     localStorage.setItem('user', JSON.stringify(response.data))
     localStorage.setItem('token', response.data.token || '')
-    
+
     ElMessage.success('登录成功')
     router.push('/admin')
   } catch (error) {
@@ -214,22 +224,22 @@ async function register() {
   try {
     await registerFormRef.value.validate()
     registerLoading.value = true
-    
+
     await axios.post(getApiUrl('/api/users/register'), {
       username: registerForm.username,
       email: registerForm.email,
-      password: registerForm.password
+      password: registerForm.password,
     })
-    
+
     ElMessage.success('注册成功，请登录')
     tab.value = 'login'
-    
+
     // 清空注册表单
     Object.assign(registerForm, {
       username: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     })
   } catch (error) {
     if (error.response) {
@@ -352,11 +362,11 @@ async function register() {
   .login-card {
     padding: 30px 20px;
   }
-  
+
   .login-title {
     font-size: 2rem;
   }
-  
+
   .login-subtitle {
     font-size: 1rem;
   }

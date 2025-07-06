@@ -5,15 +5,15 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: []
+  routes: [],
 })
 
 describe('App', () => {
   it('renders properly', async () => {
     const wrapper = mount(App, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     expect(wrapper.exists()).toBe(true)
   })
@@ -21,8 +21,8 @@ describe('App', () => {
   it('contains navigation links', async () => {
     const wrapper = mount(App, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const links = wrapper.findAll('a')
     expect(links.length).toBeGreaterThan(0)
@@ -31,11 +31,10 @@ describe('App', () => {
   it('contains router-view', async () => {
     const wrapper = mount(App, {
       global: {
-        plugins: [router]
-      }
+        plugins: [router],
+      },
     })
     const routerView = wrapper.findComponent({ name: 'RouterView' })
     expect(routerView.exists()).toBe(true)
   })
 })
- 

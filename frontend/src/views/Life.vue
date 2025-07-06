@@ -125,7 +125,7 @@ const toolbars = [
   'preview',
   'fullscreen',
   'page-break',
-  'catalog'
+  'catalog',
 ]
 
 function fetchLogs() {

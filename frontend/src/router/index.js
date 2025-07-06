@@ -6,10 +6,10 @@ const routes = [
   { path: '/life', component: () => import('../views/Life.vue') },
   { path: '/about', component: () => import('../views/About.vue') },
   { path: '/contact', component: () => import('../views/Contact.vue') },
-  { 
-    path: '/admin', 
+  {
+    path: '/admin',
     component: () => import('../views/Admin.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   { path: '/login', component: () => import('../views/Login.vue') },
 ]
@@ -22,7 +22,7 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('user')
-  
+
   if (to.meta.requiresAuth && !isAuthenticated) {
     // 需要登录但未登录，重定向到登录页
     next('/login')
