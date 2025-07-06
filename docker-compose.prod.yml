@@ -8,13 +8,13 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=sqlite:///./app.db
+      - DATABASE_URL=sqlite:////app/data/app.db
       - SECRET_KEY=${SECRET_KEY:-your-secret-key}
       - DEBUG=false
       - HOST=0.0.0.0
       - PORT=8000
     volumes:
-      - backend_data:/app/data
+      - ./data:/app/data
     networks:
       - itinglife-network
     healthcheck:
@@ -38,10 +38,6 @@ services:
       - backend
     networks:
       - itinglife-network
-
-volumes:
-  backend_data:
-    driver: local
 
 networks:
   itinglife-network:

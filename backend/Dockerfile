@@ -16,6 +16,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制应用代码
 COPY . .
 
+# 创建数据目录
+RUN mkdir -p /app/data
+
 # 创建非root用户
 RUN adduser --disabled-password --gecos '' appuser && chown -R appuser:appuser /app
 USER appuser

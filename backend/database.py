@@ -3,8 +3,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
+# 确保数据目录存在
+DATA_DIR = "/app/data"
+os.makedirs(DATA_DIR, exist_ok=True)
+
+# 数据库文件路径
+DATABASE_FILE = os.path.join(DATA_DIR, "app.db")
+
 # 数据库URL
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DATABASE_FILE}")
 
 # 创建数据库引擎
 engine = create_engine(

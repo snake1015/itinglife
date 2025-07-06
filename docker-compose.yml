@@ -11,8 +11,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - backend_data:/app/data
+      - ./data:/app/data
     environment:
       - PYTHONPATH=/app
-volumes:
-  backend_data: 
+      - DATABASE_URL=sqlite:////app/data/app.db 
