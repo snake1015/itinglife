@@ -12,7 +12,7 @@
               {{ currentUser?.username?.charAt(0)?.toUpperCase() }}
             </el-avatar>
             <span class="username">{{ currentUser?.username }}</span>
-            <el-icon><ArrowDown /></el-icon>
+            <span>▼</span>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
@@ -181,7 +181,7 @@ import 'md-editor-v3/lib/style.css'
 import { getApiUrl } from '../config.js'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowDown } from '@element-plus/icons-vue'
+// 移除图标导入，使用文本替代
 
 const activeTab = ref('article')
 const articles = ref([])
