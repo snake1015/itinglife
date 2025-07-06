@@ -3,13 +3,20 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from database import get_db
 from models import Article, Category, User
-from schemas import ArticleOut
+from schemas import ArticleOut, ArticleCreate
 
 router = APIRouter()
 
 @router.post('', response_model=ArticleOut)
-def create_article(title: str, content: str, summary: str = '', category_id: int = None, tags: str = '', author_id: int = None, is_featured: bool = False, db: Session = Depends(get_db)):
-    article = Article(title=title, content=content, summary=summary, category_id=category_id, tags=tags, author_id=author_id, is_featured=is_featured)
+def create_article(article_data: ArticleCreate, db: Session = Depends(get_db)):
+    article = Article(
+        title=article_data.title,
+        content=article_data.content,
+        summary=article_data.summary or '',
+        category_id=article_data.category_id,
+        tags=article_data.tags or '',
+        is_featured=article_data.is_featured
+    )
     db.add(article)
     db.commit()
     db.refresh(article)
@@ -41,22 +48,18 @@ def get_article(article_id: int, db: Session = Depends(get_db)):
     return article
 
 @router.put('/{article_id}', response_model=ArticleOut)
-def update_article(article_id: int, title: str = None, content: str = None, summary: str = None, category_id: int = None, tags: str = None, is_featured: bool = None, db: Session = Depends(get_db)):
+def update_article(article_id: int, article_data: ArticleCreate, db: Session = Depends(get_db)):
     article = db.query(Article).filter(Article.id == article_id).first()
     if not article:
         raise HTTPException(status_code=404, detail='文章不存在')
-    if title is not None:
-        article.title = title
-    if content is not None:
-        article.content = content
-    if summary is not None:
-        article.summary = summary
-    if category_id is not None:
-        article.category_id = category_id
-    if tags is not None:
-        article.tags = tags
-    if is_featured is not None:
-        article.is_featured = is_featured
+    
+    article.title = article_data.title
+    article.content = article_data.content
+    article.summary = article_data.summary or ''
+    article.category_id = article_data.category_id
+    article.tags = article_data.tags or ''
+    article.is_featured = article_data.is_featured
+    
     db.commit()
     db.refresh(article)
     return article

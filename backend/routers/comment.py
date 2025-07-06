@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Comment
-from schemas import CommentOut
+from schemas import CommentOut, CommentCreate
 from typing import List
 
 router = APIRouter()
 
 @router.post('', response_model=CommentOut)
-def create_comment(content: str, article_id: int, user_id: int, db: Session = Depends(get_db)):
-    comment = Comment(content=content, article_id=article_id, user_id=user_id)
+def create_comment(comment_data: CommentCreate, db: Session = Depends(get_db)):
+    comment = Comment(content=comment_data.content, article_id=comment_data.article_id, user_id=getattr(comment_data, 'user_id', None))
     db.add(comment)
     db.commit()
     db.refresh(comment)

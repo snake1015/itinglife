@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Banner
-from schemas import BannerOut
+from schemas import BannerOut, BannerCreate
 from typing import List
 
 router = APIRouter()
@@ -12,8 +12,8 @@ def list_banners(db: Session = Depends(get_db)):
     return db.query(Banner).order_by(Banner.created_at.desc()).all()
 
 @router.post('', response_model=BannerOut)
-def create_banner(img: str, link: str = '', db: Session = Depends(get_db)):
-    banner = Banner(img=img, link=link)
+def create_banner(banner_data: BannerCreate, db: Session = Depends(get_db)):
+    banner = Banner(img=banner_data.img, link=banner_data.link)
     db.add(banner)
     db.commit()
     db.refresh(banner)

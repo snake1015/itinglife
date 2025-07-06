@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Message
-from schemas import MessageOut
+from schemas import MessageOut, MessageCreate
 from typing import List
 
 router = APIRouter()
 
 @router.post('', response_model=MessageOut)
-def create_message(content: str, user_id: int = None, db: Session = Depends(get_db)):
-    message = Message(content=content, user_id=user_id)
+def create_message(message_data: MessageCreate, db: Session = Depends(get_db)):
+    message = Message(content=message_data.content, user_id=getattr(message_data, 'user_id', None))
     db.add(message)
     db.commit()
     db.refresh(message)

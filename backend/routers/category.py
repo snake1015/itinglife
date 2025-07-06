@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Category
-from schemas import CategoryOut
+from schemas import CategoryOut, CategoryCreate
 from typing import List
 
 router = APIRouter()
@@ -12,8 +12,8 @@ def list_categories(db: Session = Depends(get_db)):
     return db.query(Category).all()
 
 @router.post('', response_model=CategoryOut)
-def create_category(name: str, description: str = '', db: Session = Depends(get_db)):
-    category = Category(name=name, description=description)
+def create_category(category_data: CategoryCreate, db: Session = Depends(get_db)):
+    category = Category(name=category_data.name, description=getattr(category_data, 'description', ''))
     db.add(category)
     db.commit()
     db.refresh(category)
