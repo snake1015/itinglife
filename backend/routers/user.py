@@ -7,7 +7,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.get('/', response_model=List[UserOut])
+@router.get('', response_model=List[UserOut])
 def list_users(db: Session = Depends(get_db)):
     return db.query(User).all()
 

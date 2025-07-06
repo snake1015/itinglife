@@ -7,11 +7,11 @@ from typing import List
 
 router = APIRouter()
 
-@router.get('/', response_model=List[CategoryOut])
+@router.get('', response_model=List[CategoryOut])
 def list_categories(db: Session = Depends(get_db)):
     return db.query(Category).all()
 
-@router.post('/', response_model=CategoryOut)
+@router.post('', response_model=CategoryOut)
 def create_category(name: str, description: str = '', db: Session = Depends(get_db)):
     category = Category(name=name, description=description)
     db.add(category)

@@ -7,11 +7,11 @@ from typing import List
 
 router = APIRouter()
 
-@router.get('/', response_model=List[BannerOut])
+@router.get('', response_model=List[BannerOut])
 def list_banners(db: Session = Depends(get_db)):
     return db.query(Banner).order_by(Banner.created_at.desc()).all()
 
-@router.post('/', response_model=BannerOut)
+@router.post('', response_model=BannerOut)
 def create_banner(img: str, link: str = '', db: Session = Depends(get_db)):
     banner = Banner(img=img, link=link)
     db.add(banner)

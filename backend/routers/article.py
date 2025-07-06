@@ -7,7 +7,7 @@ from schemas import ArticleOut
 
 router = APIRouter()
 
-@router.post('/', response_model=ArticleOut)
+@router.post('', response_model=ArticleOut)
 def create_article(title: str, content: str, summary: str = '', category_id: int = None, tags: str = '', author_id: int = None, is_featured: bool = False, db: Session = Depends(get_db)):
     article = Article(title=title, content=content, summary=summary, category_id=category_id, tags=tags, author_id=author_id, is_featured=is_featured)
     db.add(article)
@@ -15,7 +15,7 @@ def create_article(title: str, content: str, summary: str = '', category_id: int
     db.refresh(article)
     return article
 
-@router.get('/', response_model=List[ArticleOut])
+@router.get('', response_model=List[ArticleOut])
 def list_articles(category_id: Optional[int] = None, tag: Optional[str] = None, is_featured: Optional[bool] = None, author_id: Optional[int] = None, db: Session = Depends(get_db)):
     query = db.query(Article)
     if category_id:

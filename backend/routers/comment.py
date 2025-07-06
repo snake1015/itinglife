@@ -7,7 +7,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.post('/', response_model=CommentOut)
+@router.post('', response_model=CommentOut)
 def create_comment(content: str, article_id: int, user_id: int, db: Session = Depends(get_db)):
     comment = Comment(content=content, article_id=article_id, user_id=user_id)
     db.add(comment)
@@ -15,7 +15,7 @@ def create_comment(content: str, article_id: int, user_id: int, db: Session = De
     db.refresh(comment)
     return comment
 
-@router.get('/', response_model=List[CommentOut])
+@router.get('', response_model=List[CommentOut])
 def list_comments(article_id: int = None, db: Session = Depends(get_db)):
     query = db.query(Comment)
     if article_id:

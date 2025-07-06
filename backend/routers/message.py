@@ -7,7 +7,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.post('/', response_model=MessageOut)
+@router.post('', response_model=MessageOut)
 def create_message(content: str, user_id: int = None, db: Session = Depends(get_db)):
     message = Message(content=content, user_id=user_id)
     db.add(message)
@@ -15,7 +15,7 @@ def create_message(content: str, user_id: int = None, db: Session = Depends(get_
     db.refresh(message)
     return message
 
-@router.get('/', response_model=List[MessageOut])
+@router.get('', response_model=List[MessageOut])
 def list_messages(db: Session = Depends(get_db)):
     return db.query(Message).order_by(Message.created_at.desc()).all()
 

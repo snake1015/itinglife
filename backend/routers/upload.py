@@ -7,7 +7,7 @@ router = APIRouter()
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), '../static/uploads')
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-@router.post('/')
+@router.post('')
 async def upload_file(file: UploadFile = File(...)):
     ext = os.path.splitext(file.filename)[-1]
     filename = f"{uuid4().hex}{ext}"
