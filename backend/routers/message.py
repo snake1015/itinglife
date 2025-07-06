@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ..database import SessionLocal
-from ..models import Message
+from database import SessionLocal
+from models import Message
 
 router = APIRouter()
 

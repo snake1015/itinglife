@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from .database import init_db
-from .routers import user, article, category, comment, message, upload, banner
-from .config import settings
+from database import init_db
+from routers import user, article, category, comment, message, upload, banner
+from config import settings
 import os
 
 app = FastAPI(
