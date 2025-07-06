@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.orm import Session
 from database import get_db
 from models import User
-from schemas import UserOut
+from schemas import UserOut, UserCreate
 from typing import List
 
 router = APIRouter()
@@ -12,18 +12,18 @@ def list_users(db: Session = Depends(get_db)):
     return db.query(User).all()
 
 @router.post('/register')
-def register(username: str, email: str, password: str, db: Session = Depends(get_db)):
-    if db.query(User).filter((User.username == username) | (User.email == email)).first():
+def register(user_data: UserCreate = Body(...), db: Session = Depends(get_db)):
+    if db.query(User).filter((User.username == user_data.username) | (User.email == user_data.email)).first():
         raise HTTPException(status_code=400, detail='用户已存在')
-    user = User(username=username, email=email, password=password)
+    user = User(username=user_data.username, email=user_data.email, password=user_data.password)
     db.add(user)
     db.commit()
     db.refresh(user)
     return {"id": user.id, "username": user.username, "email": user.email}
 
 @router.post('/login')
-def login(username: str, password: str, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == username, User.password == password).first()
+def login(user_data: UserCreate = Body(...), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == user_data.username, User.password == user_data.password).first()
     if not user:
         raise HTTPException(status_code=401, detail='用户名或密码错误')
     return {"id": user.id, "username": user.username, "email": user.email}
