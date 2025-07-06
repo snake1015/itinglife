@@ -102,7 +102,7 @@
       </el-tab-pane>
       <el-tab-pane label="轮播图管理" name="banner">
         <el-upload
-          action="http://localhost:8000/api/upload"
+          :action="getApiUrl('/api/upload')"
           :on-success="handleBannerUpload"
           :show-file-list="false"
         >
@@ -151,6 +151,7 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
+import { getApiUrl } from '../config.js'
 
 const activeTab = ref('article')
 const articles = ref([])
@@ -201,27 +202,27 @@ const toolbars = [
 ]
 
 function fetchArticles() {
-  axios.get('http://localhost:8000/api/articles').then(res => {
+  axios.get(getApiUrl('/api/articles')).then(res => {
     articles.value = res.data
   })
 }
 function fetchCategories() {
-  axios.get('http://localhost:8000/api/categories').then(res => {
+  axios.get(getApiUrl('/api/categories')).then(res => {
     categories.value = res.data
   })
 }
 function fetchUsers() {
-  axios.get('http://localhost:8000/api/users').then(res => {
+  axios.get(getApiUrl('/api/users')).then(res => {
     users.value = res.data
   })
 }
 function fetchMessages() {
-  axios.get('http://localhost:8000/api/messages').then(res => {
+  axios.get(getApiUrl('/api/messages')).then(res => {
     messages.value = res.data
   })
 }
 function fetchBanners() {
-  axios.get('http://localhost:8000/api/banners').then(res => {
+  axios.get(getApiUrl('/api/banners')).then(res => {
     banners.value = res.data
   })
 }
@@ -233,38 +234,38 @@ function editArticle(row) {
 function submitArticle() {
   if (editId.value) {
     axios
-      .put(`http://localhost:8000/api/articles/${editId.value}`, form.value)
+      .put(getApiUrl(`/api/articles/${editId.value}`), form.value)
       .then(() => {
         showEditor.value = false
         fetchArticles()
       })
   } else {
-    axios.post('http://localhost:8000/api/articles', form.value).then(() => {
+    axios.post(getApiUrl('/api/articles'), form.value).then(() => {
       showEditor.value = false
       fetchArticles()
     })
   }
 }
 function deleteArticle(id) {
-  axios.delete(`http://localhost:8000/api/articles/${id}`).then(() => {
+  axios.delete(getApiUrl(`/api/articles/${id}`)).then(() => {
     fetchArticles()
   })
 }
 function addCategory() {
   axios
-    .post('http://localhost:8000/api/categories', { name: newCategory.value })
+    .post(getApiUrl('/api/categories'), { name: newCategory.value })
     .then(() => {
       newCategory.value = ''
       fetchCategories()
     })
 }
 function deleteCategory(id) {
-  axios.delete(`http://localhost:8000/api/categories/${id}`).then(() => {
+  axios.delete(getApiUrl(`/api/categories/${id}`)).then(() => {
     fetchCategories()
   })
 }
 function deleteMessage(id) {
-  axios.delete(`http://localhost:8000/api/messages/${id}`).then(() => {
+  axios.delete(getApiUrl(`/api/messages/${id}`)).then(() => {
     fetchMessages()
   })
 }
@@ -292,7 +293,7 @@ function saveBanner() {
   if (bannerForm.value.id) {
     axios
       .put(
-        `http://localhost:8000/api/banners/${bannerForm.value.id}`,
+        getApiUrl(`/api/banners/${bannerForm.value.id}`),
         bannerForm.value
       )
       .then(() => {
@@ -302,7 +303,7 @@ function saveBanner() {
       })
   } else {
     axios
-      .post('http://localhost:8000/api/banners', bannerForm.value)
+      .post(getApiUrl('/api/banners'), bannerForm.value)
       .then(() => {
         showBannerEditor.value = false
         bannerForm.value = { id: null, img: '', link: '' }
@@ -311,7 +312,7 @@ function saveBanner() {
   }
 }
 function deleteBanner(id) {
-  axios.delete(`http://localhost:8000/api/banners/${id}`).then(() => {
+  axios.delete(getApiUrl(`/api/banners/${id}`)).then(() => {
     fetchBanners()
   })
 }

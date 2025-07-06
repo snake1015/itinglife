@@ -83,6 +83,7 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { MdEditor, MdPreview } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
+import { getApiUrl } from '../config.js'
 
 const logs = ref([])
 const selectedDate = ref()
@@ -130,7 +131,7 @@ const toolbars = [
 function fetchLogs() {
   // 示例：可按日期筛选，实际应调用后端API
   axios
-    .get('http://localhost:8000/api/articles', { params: { category_id: 2 } })
+    .get(getApiUrl('/api/articles'), { params: { category_id: 2 } })
     .then(res => {
       logs.value = res.data
     })
@@ -142,14 +143,14 @@ function viewLog(log) {
 }
 function fetchComments(article_id) {
   axios
-    .get('http://localhost:8000/api/comments', { params: { article_id } })
+    .get(getApiUrl('/api/comments'), { params: { article_id } })
     .then(res => {
       comments.value = res.data
     })
 }
 function submitComment() {
   axios
-    .post('http://localhost:8000/api/comments', {
+    .post(getApiUrl('/api/comments'), {
       content: newComment.value,
       article_id: detail.value.id,
       user_id: 1, // TODO: 替换为当前登录用户
@@ -162,7 +163,7 @@ function submitComment() {
 function submitLog() {
   // category_id: 2 代表生活日志
   axios
-    .post('http://localhost:8000/api/articles', {
+    .post(getApiUrl('/api/articles'), {
       ...form.value,
       category_id: 2,
     })
@@ -176,7 +177,7 @@ function handleUploadImage(files, callback) {
   const formData = new FormData()
   formData.append('file', file)
   axios
-    .post('http://localhost:8000/api/upload', formData, {
+    .post(getApiUrl('/api/upload'), formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then(res => {

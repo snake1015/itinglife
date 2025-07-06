@@ -40,6 +40,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { getApiUrl } from '../config.js'
 const tab = ref('login')
 const loginForm = ref({ username: '', password: '' })
 const registerForm = ref({ username: '', email: '', password: '' })
@@ -51,7 +52,7 @@ function login() {
     return
   }
   axios
-    .post('http://localhost:8000/api/users/login', loginForm.value)
+    .post(getApiUrl('/api/users/login'), loginForm.value)
     .then(res => {
       localStorage.setItem('user', JSON.stringify(res.data))
       ElMessage.success('登录成功')
@@ -71,7 +72,7 @@ function register() {
     return
   }
   axios
-    .post('http://localhost:8000/api/users/register', registerForm.value)
+    .post(getApiUrl('/api/users/register'), registerForm.value)
     .then(() => {
       ElMessage.success('注册成功，请登录')
       tab.value = 'login'
