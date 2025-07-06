@@ -22,6 +22,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup():
+    # 延迟导入以避免循环导入问题
     from database import init_db
     init_db()
 
