@@ -54,6 +54,7 @@
             <template #header>{{ editId ? '编辑文章' : '新建文章' }}</template>
             <el-input v-model="form.title" placeholder="标题" class="mb" />
             <el-select v-model="form.category_id" placeholder="分类" class="mb">
+              <el-option label="无分类" :value="null" />
               <el-option
                 v-for="cat in categories"
                 :key="cat.id"
@@ -276,16 +277,12 @@ function submitArticle() {
     ElMessage.warning('请输入文章内容')
     return
   }
-  if (!form.value.category_id) {
-    ElMessage.warning('请选择文章分类')
-    return
-  }
 
   // 准备提交数据
   const submitData = {
     title: form.value.title.trim(),
     content: form.value.content.trim(),
-    category_id: parseInt(form.value.category_id),
+    category_id: form.value.category_id ? parseInt(form.value.category_id) : null,
     tags: form.value.tags.trim(),
     is_featured: form.value.is_featured
   }

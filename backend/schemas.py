@@ -44,7 +44,7 @@ class ArticleBase(BaseModel):
     tags: Optional[str] = None
 
 class ArticleCreate(ArticleBase):
-    category_id: int
+    category_id: Optional[int] = None
 
 class ArticleOut(ArticleBase):
     id: int
