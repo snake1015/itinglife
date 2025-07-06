@@ -53,8 +53,8 @@
           <el-dialog v-model="showEditor" width="70%">
             <template #header>{{ editId ? '编辑文章' : '新建文章' }}</template>
             <el-input v-model="form.title" placeholder="标题" class="mb" />
-            <el-select v-model="form.category_id" placeholder="分类" class="mb">
-              <el-option label="无分类" :value="null" />
+            <el-select v-model="form.category_id" placeholder="分类" class="mb" clearable>
+              <el-option label="无分类" :value="" />
               <el-option
                 v-for="cat in categories"
                 :key="cat.id"
@@ -282,7 +282,7 @@ function submitArticle() {
   const submitData = {
     title: form.value.title.trim(),
     content: form.value.content.trim(),
-    category_id: form.value.category_id ? parseInt(form.value.category_id) : null,
+    category_id: form.value.category_id && form.value.category_id !== '' ? parseInt(form.value.category_id) : null,
     tags: form.value.tags.trim(),
     is_featured: form.value.is_featured
   }
