@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.orm import Session
 from database import get_db
 from models import User
-from schemas import UserOut, UserCreate
+from schemas import UserOut, UserCreate, UserLogin
 from typing import List
 
 router = APIRouter()
@@ -22,7 +22,7 @@ def register(user_data: UserCreate = Body(...), db: Session = Depends(get_db)):
     return {"id": user.id, "username": user.username, "email": user.email}
 
 @router.post('/login')
-def login(user_data: UserCreate = Body(...), db: Session = Depends(get_db)):
+def login(user_data: UserLogin = Body(...), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == user_data.username, User.password == user_data.password).first()
     if not user:
         raise HTTPException(status_code=401, detail='用户名或密码错误')
