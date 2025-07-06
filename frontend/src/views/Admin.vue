@@ -1,5 +1,10 @@
 <template>
   <div class="admin-container">
+    <!-- 测试信息 -->
+    <div style="background: #f0f9ff; padding: 10px; margin-bottom: 10px; border: 1px solid #3b82f6; border-radius: 4px;">
+      <strong>✅ 正在加载 Admin.vue 组件</strong>
+    </div>
+    
     <!-- 顶部导航栏 -->
     <div class="admin-header">
       <div class="header-left">
