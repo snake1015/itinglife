@@ -50,7 +50,7 @@ class ArticleOut(ArticleBase):
     id: int
     created_at: datetime
     updated_at: datetime
-    category_id: int
+    category_id: Optional[int] = None
     author_id: Optional[int] = None
 
     class Config:

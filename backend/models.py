@@ -29,7 +29,7 @@ class Article(Base):
     is_featured = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
-    category_id = Column(Integer, ForeignKey('categories.id'))
+    category_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
     category = relationship('Category', back_populates='articles')
     comments = relationship('Comment', back_populates='article')
     tags = Column(String(128))  # 逗号分隔
