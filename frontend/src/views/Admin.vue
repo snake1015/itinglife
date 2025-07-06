@@ -1,6 +1,33 @@
 <template>
-  <div>
-    <el-tabs v-model="activeTab">
+  <div class="admin-container">
+    <!-- 顶部导航栏 -->
+    <div class="admin-header">
+      <div class="header-left">
+        <h1 class="admin-title">itinglife 后台管理</h1>
+      </div>
+      <div class="header-right">
+        <el-dropdown @command="handleCommand">
+          <span class="user-info">
+            <el-avatar :size="32" :src="userAvatar">
+              {{ currentUser?.username?.charAt(0)?.toUpperCase() }}
+            </el-avatar>
+            <span class="username">{{ currentUser?.username }}</span>
+            <el-icon><ArrowDown /></el-icon>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="profile">个人资料</el-dropdown-item>
+              <el-dropdown-item command="settings">设置</el-dropdown-item>
+              <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="admin-content">
+      <el-tabs v-model="activeTab" class="admin-tabs">
       <el-tab-pane label="文章管理" name="article">
         <el-button type="primary" @click="showEditor = true"
           >新建文章</el-button
@@ -147,11 +174,14 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { getApiUrl } from '../config.js'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { ArrowDown } from '@element-plus/icons-vue'
 
 const activeTab = ref('article')
 const articles = ref([])
@@ -172,6 +202,15 @@ const faqContent = ref('')
 const banners = ref([])
 const showBannerEditor = ref(false)
 const bannerForm = ref({ id: null, img: '', link: '' })
+const router = useRouter()
+
+// 用户信息
+const currentUser = computed(() => {
+  const userStr = localStorage.getItem('user')
+  return userStr ? JSON.parse(userStr) : null
+})
+
+const userAvatar = ref('')
 
 // md-editor-v3 工具栏配置
 const toolbars = [
@@ -316,7 +355,48 @@ function deleteBanner(id) {
     fetchBanners()
   })
 }
+
+// 用户相关功能
+function handleCommand(command) {
+  switch (command) {
+    case 'profile':
+      ElMessage.info('个人资料功能开发中...')
+      break
+    case 'settings':
+      ElMessage.info('设置功能开发中...')
+      break
+    case 'logout':
+      logout()
+      break
+  }
+}
+
+function logout() {
+  ElMessageBox.confirm(
+    '确定要退出登录吗？',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(() => {
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    ElMessage.success('已退出登录')
+    router.push('/login')
+  }).catch(() => {
+    // 用户取消
+  })
+}
+
 onMounted(() => {
+  // 检查登录状态
+  if (!currentUser.value) {
+    router.push('/login')
+    return
+  }
+  
   fetchArticles()
   fetchCategories()
   fetchUsers()
@@ -326,10 +406,103 @@ onMounted(() => {
 })
 </script>
 <style scoped>
+.admin-container {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.admin-header {
+  background: white;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.admin-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.user-info:hover {
+  background-color: #f5f7fa;
+}
+
+.username {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.admin-content {
+  padding: 24px;
+}
+
+.admin-tabs {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-tabs :deep(.el-tabs__header) {
+  margin-bottom: 24px;
+}
+
+.admin-tabs :deep(.el-tabs__item) {
+  font-weight: 500;
+}
+
 .mt {
   margin-top: 20px;
 }
+
 .mb {
   margin-bottom: 16px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .admin-header {
+    padding: 0 16px;
+  }
+  
+  .admin-title {
+    font-size: 1.2rem;
+  }
+  
+  .admin-content {
+    padding: 16px;
+  }
+  
+  .admin-tabs {
+    padding: 16px;
+  }
 }
 </style>
