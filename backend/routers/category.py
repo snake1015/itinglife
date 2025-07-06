@@ -13,7 +13,7 @@ def list_categories(db: Session = Depends(get_db)):
 
 @router.post('', response_model=CategoryOut)
 def create_category(category_data: CategoryCreate, db: Session = Depends(get_db)):
-    category = Category(name=category_data.name, description=getattr(category_data, 'description', ''))
+    category = Category(name=category_data.name)
     db.add(category)
     db.commit()
     db.refresh(category)
