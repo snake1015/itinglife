@@ -267,9 +267,32 @@ function editArticle(row) {
 }
 
 function submitArticle() {
+  // 验证必填字段
+  if (!form.value.title.trim()) {
+    ElMessage.warning('请输入文章标题')
+    return
+  }
+  if (!form.value.content.trim()) {
+    ElMessage.warning('请输入文章内容')
+    return
+  }
+  if (!form.value.category_id) {
+    ElMessage.warning('请选择文章分类')
+    return
+  }
+
+  // 准备提交数据
+  const submitData = {
+    title: form.value.title.trim(),
+    content: form.value.content.trim(),
+    category_id: parseInt(form.value.category_id),
+    tags: form.value.tags.trim(),
+    is_featured: form.value.is_featured
+  }
+
   if (editId.value) {
     axios
-      .put(getApiUrl(`/api/articles/${editId.value}`), form.value)
+      .put(getApiUrl(`/api/articles/${editId.value}`), submitData)
       .then(() => {
         showEditor.value = false
         editId.value = null
@@ -288,7 +311,7 @@ function submitArticle() {
       })
   } else {
     axios
-      .post(getApiUrl('/api/articles'), form.value)
+      .post(getApiUrl('/api/articles'), submitData)
       .then(() => {
         showEditor.value = false
         form.value = {
@@ -332,7 +355,7 @@ function addCategory() {
     return
   }
   axios
-    .post(getApiUrl('/api/categories'), { name: newCategory.value })
+    .post(getApiUrl('/api/categories'), { name: newCategory.value.trim() })
     .then(() => {
       newCategory.value = ''
       fetchCategories()
