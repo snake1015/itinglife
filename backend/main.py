@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from database import init_db
 from routers import user, article, category, comment, message, upload, banner
 from config import settings
 import os
@@ -23,6 +22,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup():
+    from database import init_db
     init_db()
 
 app.include_router(user.router, prefix="/api/users", tags=["用户"])

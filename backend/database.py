@@ -20,8 +20,8 @@ Base = declarative_base()
 
 def init_db():
     """初始化数据库，创建所有表"""
-    # 导入所有模型以确保表被创建
-    import models
+    # 延迟导入以避免循环导入
+    from models import User, Category, Article, Comment, Message, Banner
     Base.metadata.create_all(bind=engine)
 
 def get_db():
