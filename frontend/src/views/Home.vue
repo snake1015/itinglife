@@ -40,12 +40,12 @@
         <div class="posts-grid">
           <div class="post-card" v-for="post in latestPosts" :key="post.id">
             <div class="post-header">
-              <span class="post-category">{{ post.category }}</span>
-              <span class="post-date">{{ post.date }}</span>
+              <span class="post-category">{{ getCategoryName(post.category_id) }}</span>
+              <span class="post-date">{{ formatDate(post.created_at) }}</span>
             </div>
             <h3 class="post-title">{{ post.title }}</h3>
-            <p class="post-excerpt">{{ post.excerpt }}</p>
-            <a :href="post.link" class="read-more">阅读更多</a>
+            <p class="post-excerpt">{{ post.summary }}</p>
+            <a :href="'/tech'" class="read-more">阅读更多</a>
           </div>
         </div>
       </div>
@@ -54,37 +54,53 @@
 </template>
 
 <script>
+import axios from 'axios'
+import { getApiUrl } from '../config.js'
+
 export default {
   name: 'Home',
   data() {
     return {
-      latestPosts: [
-        {
-          id: 1,
-          title: 'Vue.js 3.0 新特性详解',
-          excerpt: '探索Vue.js 3.0带来的Composition API、性能提升等新特性...',
-          category: '技术分享',
-          date: '2024-01-15',
-          link: '/tech',
-        },
-        {
-          id: 2,
-          title: '我的编程学习之路',
-          excerpt: '分享从零开始学习编程的经历和心得体会...',
-          category: '生活记录',
-          date: '2024-01-10',
-          link: '/life',
-        },
-        {
-          id: 3,
-          title: '前端工程化实践',
-          excerpt: '探讨现代前端开发中的工程化工具和最佳实践...',
-          category: '技术分享',
-          date: '2024-01-05',
-          link: '/tech',
-        },
-      ],
+      latestPosts: [],
+      categories: [],
     }
+  },
+  methods: {
+    fetchLatestPosts() {
+      axios
+        .get(getApiUrl('/api/articles'))
+        .then(res => {
+          // 只取前5条
+          this.latestPosts = res.data.slice(0, 5)
+        })
+        .catch(() => {
+          this.latestPosts = []
+        })
+    },
+    fetchCategories() {
+      axios
+        .get(getApiUrl('/api/categories'))
+        .then(res => {
+          this.categories = res.data
+        })
+        .catch(() => {
+          this.categories = []
+        })
+    },
+    getCategoryName(categoryId) {
+      if (!categoryId) return '未分类'
+      const cat = this.categories.find(c => c.id === categoryId)
+      return cat ? cat.name : '未分类'
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return ''
+      const d = new Date(dateStr)
+      return d.toLocaleDateString('zh-CN')
+    },
+  },
+  mounted() {
+    this.fetchLatestPosts()
+    this.fetchCategories()
   },
 }
 </script>
