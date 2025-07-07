@@ -108,56 +108,15 @@
 </template>
 
 <script>
+import axios from 'axios'
+import { getApiUrl } from '../config.js'
+
 export default {
   name: 'Tech',
   data() {
     return {
-      articles: [
-        {
-          id: 1,
-          title: 'Vue.js 3.0 Composition API 深度解析',
-          summary:
-            '深入探讨Vue 3.0的Composition API，包括响应式系统、生命周期钩子等核心概念...',
-          content:
-            '<h2>Vue.js 3.0 Composition API 深度解析</h2><p>Vue 3.0带来了全新的Composition API，这是一个革命性的改变...</p>',
-          category_id: 1,
-          tags: ['Vue.js', '前端', 'JavaScript'],
-          created_at: '2024-01-15T10:00:00Z',
-          views: 1250,
-          likes: 89,
-        },
-        {
-          id: 2,
-          title: 'TypeScript 高级类型系统详解',
-          summary:
-            '探索TypeScript的高级类型特性，包括条件类型、映射类型、模板字面量类型等...',
-          content:
-            '<h2>TypeScript 高级类型系统详解</h2><p>TypeScript的类型系统非常强大，让我们深入了解一下...</p>',
-          category_id: 2,
-          tags: ['TypeScript', '类型系统', 'JavaScript'],
-          created_at: '2024-01-12T14:30:00Z',
-          views: 980,
-          likes: 67,
-        },
-        {
-          id: 3,
-          title: '现代前端工程化实践指南',
-          summary: '从构建工具到部署流程，全面介绍现代前端项目的工程化实践...',
-          content:
-            '<h2>现代前端工程化实践指南</h2><p>前端工程化是现代开发不可或缺的一部分...</p>',
-          category_id: 3,
-          tags: ['工程化', 'Webpack', 'Vite'],
-          created_at: '2024-01-10T09:15:00Z',
-          views: 1560,
-          likes: 112,
-        },
-      ],
-      categories: [
-        { id: 1, name: '前端开发' },
-        { id: 2, name: '后端技术' },
-        { id: 3, name: '工程化' },
-        { id: 4, name: '数据库' },
-      ],
+      articles: [],
+      categories: [],
       selectedCategory: null,
       selectedTag: null,
       showArticleDetail: false,
@@ -168,29 +127,45 @@ export default {
     tagCloud() {
       const tags = new Set()
       this.articles.forEach(article => {
-        article.tags.forEach(tag => tags.add(tag))
+        if (article.tags) {
+          // 支持后端tags为字符串或数组
+          let tagArr = Array.isArray(article.tags)
+            ? article.tags
+            : (article.tags ? article.tags.split(',').map(t => t.trim()).filter(Boolean) : [])
+          tagArr.forEach(tag => tags.add(tag))
+        }
       })
       return Array.from(tags)
     },
     filteredArticles() {
       let filtered = this.articles
-
       if (this.selectedCategory) {
         filtered = filtered.filter(
           article => article.category_id === this.selectedCategory
         )
       }
-
       if (this.selectedTag) {
-        filtered = filtered.filter(article =>
-          article.tags.includes(this.selectedTag)
-        )
+        filtered = filtered.filter(article => {
+          let tagArr = Array.isArray(article.tags)
+            ? article.tags
+            : (article.tags ? article.tags.split(',').map(t => t.trim()).filter(Boolean) : [])
+          return tagArr.includes(this.selectedTag)
+        })
       }
-
       return filtered
     },
   },
   methods: {
+    fetchArticles() {
+      axios.get(getApiUrl('/api/articles')).then(res => {
+        this.articles = res.data
+      })
+    },
+    fetchCategories() {
+      axios.get(getApiUrl('/api/categories')).then(res => {
+        this.categories = res.data
+      })
+    },
     selectCategory(categoryId) {
       this.selectedCategory =
         this.selectedCategory === categoryId ? null : categoryId
@@ -214,6 +189,10 @@ export default {
       this.showArticleDetail = false
       this.selectedArticle = {}
     },
+  },
+  mounted() {
+    this.fetchArticles()
+    this.fetchCategories()
   },
 }
 </script>
