@@ -12,6 +12,8 @@ const routes = [
     meta: { requiresAuth: true },
   },
   { path: '/login', component: () => import('../views/Login.vue') },
+  { path: '/tags', component: () => import('../views/Tag.vue') },
+  { path: '/categories', component: () => import('../views/Category.vue') },
 ]
 
 const router = createRouter({
