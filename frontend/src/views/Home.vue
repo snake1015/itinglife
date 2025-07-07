@@ -15,20 +15,23 @@
       <div class="container">
         <h2 class="section-title">功能特色</h2>
         <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">📝</div>
-            <h3>技术分享</h3>
-            <p>分享编程经验、技术心得和项目实践</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🌱</div>
-            <h3>生活记录</h3>
-            <p>记录日常生活、旅行见闻和人生感悟</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">💬</div>
-            <h3>社区交流</h3>
-            <p>与志同道合的朋友交流分享</p>
+          <div
+            class="feature-card"
+            v-for="cat in categories"
+            :key="cat.id"
+          >
+            <div class="feature-icon" :style="{fontSize: '3.5rem'}">
+              <!-- 根据分类名显示不同emoji，实际可用iconfont或svg -->
+              <span v-if="cat.name.includes('技')">📝</span>
+              <span v-else-if="cat.name.includes('生活')">🌱</span>
+              <span v-else>💬</span>
+            </div>
+            <h3 class="feature-title">{{ cat.name }}</h3>
+            <p class="feature-desc">{{ cat.description || '欢迎体验丰富内容' }}</p>
+            <a
+              class="feature-more"
+              :href="cat.name.includes('技') ? '/tech' : (cat.name.includes('生活') ? '/life' : '/contact')"
+            >了解更多</a>
           </div>
         </div>
       </div>
@@ -199,31 +202,60 @@ export default {
 
 .feature-card {
   background: white;
-  padding: 40px 30px;
-  border-radius: 10px;
+  padding: 48px 32px 36px 32px;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1.5px 6px rgba(0,0,0,0.08);
+  transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0,0,0,0.10);
 }
 
 .feature-icon {
-  font-size: 3rem;
-  margin-bottom: 20px;
+  font-size: 3.5rem;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
 }
 
-.feature-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
+.feature-title {
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin-bottom: 18px;
   color: #2c3e50;
+  letter-spacing: 1px;
 }
 
-.feature-card p {
+.feature-desc {
   color: #6c757d;
-  line-height: 1.6;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  min-height: 40px;
+}
+
+.feature-more {
+  display: inline-block;
+  padding: 8px 28px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.12);
+}
+
+.feature-more:hover {
+  background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 4px 16px rgba(102,126,234,0.18);
 }
 
 .latest-posts {
@@ -313,6 +345,24 @@ export default {
   .features-grid,
   .posts-grid {
     grid-template-columns: 1fr;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .feature-card {
+    padding: 32px 12px 24px 12px;
+  }
+
+  .feature-title {
+    font-size: 1.2rem;
+  }
+
+  .feature-icon {
+    font-size: 2.2rem;
+    height: 40px;
   }
 }
 </style>
