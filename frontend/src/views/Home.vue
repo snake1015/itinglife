@@ -15,10 +15,11 @@
       <div class="container">
         <h2 class="section-title">功能特色</h2>
         <div class="features-grid">
-          <div
+          <a
             class="feature-card"
             v-for="cat in categories"
             :key="cat.id"
+            :href="cat.name.includes('技') ? '/tech' : (cat.name.includes('生活') ? '/life' : '/contact')"
           >
             <div class="feature-icon" :style="{fontSize: '3.5rem'}">
               <!-- 根据分类名显示不同emoji，实际可用iconfont或svg -->
@@ -28,11 +29,7 @@
             </div>
             <h3 class="feature-title">{{ cat.name }}</h3>
             <p class="feature-desc">{{ cat.description || '欢迎体验丰富内容' }}</p>
-            <a
-              class="feature-more"
-              :href="cat.name.includes('技') ? '/tech' : (cat.name.includes('生活') ? '/life' : '/contact')"
-            >了解更多</a>
-          </div>
+          </a>
         </div>
       </div>
     </section>
@@ -201,19 +198,24 @@ export default {
 }
 
 .feature-card {
-  background: white;
-  padding: 48px 32px 36px 32px;
+  background: none;
+  padding: 44px 24px 32px 24px;
   border-radius: 16px;
   text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1.5px 6px rgba(0,0,0,0.08);
-  transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.3s;
+  box-shadow: none;
+  transition: transform 0.25s, background 0.25s;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .feature-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0,0,0,0.10);
+  transform: translateY(-6px) scale(1.03);
+  background: linear-gradient(90deg, #f8f9fa 60%, #e9e6f7 100%);
+  box-shadow: 0 8px 32px rgba(102,126,234,0.10);
 }
 
 .feature-icon {
@@ -236,26 +238,8 @@ export default {
 .feature-desc {
   color: #6c757d;
   line-height: 1.7;
-  margin-bottom: 28px;
+  margin-bottom: 0;
   min-height: 40px;
-}
-
-.feature-more {
-  display: inline-block;
-  padding: 8px 28px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1rem;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(102,126,234,0.12);
-}
-
-.feature-more:hover {
-  background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
-  box-shadow: 0 4px 16px rgba(102,126,234,0.18);
 }
 
 .latest-posts {
@@ -353,7 +337,7 @@ export default {
   }
 
   .feature-card {
-    padding: 32px 12px 24px 12px;
+    padding: 28px 8px 18px 8px;
   }
 
   .feature-title {
