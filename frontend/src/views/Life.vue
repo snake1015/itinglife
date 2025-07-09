@@ -44,8 +44,10 @@
             :height="300"
             :toolbars="toolbars"
             @onUploadImg="handleUploadImage"
+            @onPaste="handlePasteImage"
           />
           <el-input v-model="form.summary" placeholder="摘要" class="mb" />
+          <el-progress v-if="uploading" :percentage="uploadPercent" status="success" class="mb" />
           <el-button type="primary" @click="submitLog">保存</el-button>
         </el-dialog>
       </el-col>
@@ -108,6 +110,8 @@ const mediaImages = ref([
   'https://placehold.co/100x100?text=Pic2',
 ])
 const mediaVideos = ref(['https://www.w3schools.com/html/mov_bbb.mp4'])
+const uploading = ref(false)
+const uploadPercent = ref(0)
 
 // md-editor-v3 工具栏配置
 const toolbars = [
@@ -185,13 +189,42 @@ function handleUploadImage(files, callback) {
   const file = files[0]
   const formData = new FormData()
   formData.append('file', file)
+  uploading.value = true
+  uploadPercent.value = 0
   axios
     .post(getApiUrl('/api/upload'), formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: e => {
+        if (e.total) uploadPercent.value = Math.round((e.loaded / e.total) * 100)
+      },
     })
     .then(res => {
       callback([res.data.url])
+      uploading.value = false
+      uploadPercent.value = 100
     })
+    .catch(() => {
+      uploading.value = false
+      uploadPercent.value = 0
+      window.$message?.error?.('图片上传失败')
+    })
+}
+// 粘贴/拖拽图片上传
+function handlePasteImage(e) {
+  const items = (e.clipboardData || e.dataTransfer)?.items
+  if (!items) return
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]
+    if (item.kind === 'file' && item.type.startsWith('image/')) {
+      const file = item.getAsFile()
+      handleUploadImage([file], urls => {
+        // 自动插入Markdown图片
+        form.value.content += `\n![](${urls[0]})\n`
+      })
+      e.preventDefault()
+      break
+    }
+  }
 }
 // 提取首张图片（支持markdown图片语法和html img标签）
 function getFirstImage(content) {
@@ -311,5 +344,11 @@ onMounted(() => {
   .post-title {
     font-size: 1.1rem;
   }
+}
+.life-card-img, .md-editor-preview img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
 }
 </style>
