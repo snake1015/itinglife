@@ -2,7 +2,7 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="18">
-        <el-card>
+        <div class="life-logs-section">
           <div class="flex-between">
             <el-date-picker
               v-model="selectedDate"
@@ -10,23 +10,32 @@
               placeholder="选择日期"
               @change="fetchLogs"
             />
-            <el-button type="primary" @click="showEditor = true"
-              >新建日志</el-button
-            >
+            <el-button type="primary" @click="showEditor = true">新建日志</el-button>
           </div>
           <el-divider>生活日志</el-divider>
-          <el-list>
-            <el-list-item
+          <div class="posts-grid">
+            <div
+              class="post-card life-card"
               v-for="log in logs"
               :key="log.id"
               @click="viewLog(log)"
             >
-              <div class="title">{{ log.title }}</div>
-              <div class="summary">{{ log.summary }}</div>
-              <div class="meta">{{ log.created_at }}</div>
-            </el-list-item>
-          </el-list>
-        </el-card>
+              <div class="life-card-img-wrapper" v-if="getFirstImage(log.content)">
+                <img :src="getFirstImage(log.content)" class="life-card-img" alt="封面" />
+              </div>
+              <div class="life-card-img-wrapper" v-else>
+                <img src="https://placehold.co/600x300?text=No+Image" class="life-card-img" alt="无图" />
+              </div>
+              <div class="life-card-content">
+                <div class="post-header">
+                  <span class="post-date">{{ formatDate(log.created_at) }}</span>
+                </div>
+                <h3 class="post-title">{{ log.title }}</h3>
+                <p class="post-excerpt">{{ log.summary }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
         <el-dialog v-model="showEditor" width="70%">
           <template #header>{{ editId ? '编辑日志' : '新建日志' }}</template>
           <el-input v-model="form.title" placeholder="标题" class="mb" />
@@ -184,11 +193,92 @@ function handleUploadImage(files, callback) {
       callback([res.data.url])
     })
 }
+// 提取首张图片（支持markdown图片语法和html img标签）
+function getFirstImage(content) {
+  if (!content) return ''
+  // markdown ![alt](url)
+  const mdImg = content.match(/!\[[^\]]*\]\(([^)]+)\)/)
+  if (mdImg) return mdImg[1]
+  // html <img src="...">
+  const htmlImg = content.match(/<img[^>]+src=["']([^"']+)["']/)
+  if (htmlImg) return htmlImg[1]
+  return ''
+}
+function formatDate(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('zh-CN')
+}
 onMounted(() => {
   fetchLogs()
 })
 </script>
 <style scoped>
+.life-logs-section {
+  margin-bottom: 32px;
+}
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+.post-card.life-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+.post-card.life-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 32px rgba(102,126,234,0.10);
+}
+.life-card-img-wrapper {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.life-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.life-card-content {
+  padding: 22px 24px 18px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.post-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+.post-date {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+.post-title {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  color: #2c3e50;
+  line-height: 1.4;
+}
+.post-excerpt {
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 0;
+  flex: 1;
+}
 .mt {
   margin-top: 20px;
 }
@@ -201,21 +291,25 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 10px;
 }
-.title {
-  font-weight: bold;
-  font-size: 18px;
-}
-.summary {
-  color: #888;
-}
-.meta {
-  font-size: 12px;
-  color: #aaa;
-}
 .comment {
   margin: 8px 0;
   padding: 8px;
   background: #f5f5f5;
   border-radius: 4px;
+}
+@media (max-width: 768px) {
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .life-card-img-wrapper {
+    height: 140px;
+  }
+  .life-card-content {
+    padding: 14px 10px 10px 10px;
+  }
+  .post-title {
+    font-size: 1.1rem;
+  }
 }
 </style>
