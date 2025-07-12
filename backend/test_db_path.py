@@ -4,34 +4,52 @@
 """
 
 import os
-from database import DATA_DIR, DATABASE_FILE, DATABASE_URL
+import sys
+sys.path.append(os.path.dirname(__file__))
+
+from database import DATABASE_URL, get_database_url
 
 def test_db_config():
     """测试数据库配置"""
     print("=== 数据库配置测试 ===")
-    print(f"数据目录: {DATA_DIR}")
-    print(f"数据库文件: {DATABASE_FILE}")
-    print(f"数据库URL: {DATABASE_URL}")
+    print(f"当前数据库URL: {DATABASE_URL}")
+    print(f"动态获取的URL: {get_database_url()}")
     
-    # 检查目录是否存在
-    if os.path.exists(DATA_DIR):
-        print(f"✓ 数据目录存在: {DATA_DIR}")
+    # 检查环境变量
+    env_db_url = os.getenv("DATABASE_URL")
+    if env_db_url:
+        print(f"环境变量DATABASE_URL: {env_db_url}")
     else:
-        print(f"✗ 数据目录不存在: {DATA_DIR}")
+        print("环境变量DATABASE_URL: 未设置")
     
-    # 检查数据库文件是否存在
-    if os.path.exists(DATABASE_FILE):
-        print(f"✓ 数据库文件存在: {DATABASE_FILE}")
-        file_size = os.path.getsize(DATABASE_FILE)
-        print(f"  文件大小: {file_size} 字节")
+    # 检查data目录
+    if os.path.exists("data"):
+        print("✓ data目录存在")
+        if os.path.exists("data/app.db"):
+            file_size = os.path.getsize("data/app.db")
+            print(f"✓ data/app.db存在，大小: {file_size} 字节")
+        else:
+            print("✗ data/app.db不存在")
     else:
-        print(f"✗ 数据库文件不存在: {DATABASE_FILE}")
+        print("✗ data目录不存在")
     
-    # 检查权限
-    if os.access(DATA_DIR, os.W_OK):
-        print(f"✓ 数据目录可写: {DATA_DIR}")
+    # 检查当前目录
+    if os.path.exists("app.db"):
+        file_size = os.path.getsize("app.db")
+        print(f"✓ 当前目录app.db存在，大小: {file_size} 字节")
     else:
-        print(f"✗ 数据目录不可写: {DATA_DIR}")
+        print("✗ 当前目录app.db不存在")
+    
+    # 检查Docker路径
+    if os.path.exists("/app"):
+        print("✓ /app目录存在（Docker环境）")
+        if os.path.exists("/app/data/app.db"):
+            file_size = os.path.getsize("/app/data/app.db")
+            print(f"✓ /app/data/app.db存在，大小: {file_size} 字节")
+        else:
+            print("✗ /app/data/app.db不存在")
+    else:
+        print("✗ /app目录不存在（非Docker环境）")
 
 if __name__ == "__main__":
     test_db_config() 

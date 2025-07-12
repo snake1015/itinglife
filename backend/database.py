@@ -3,15 +3,33 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# 确保数据目录存在
-DATA_DIR = "/app/data"
-os.makedirs(DATA_DIR, exist_ok=True)
-
-# 数据库文件路径
-DATABASE_FILE = os.path.join(DATA_DIR, "app.db")
+# 数据库配置优化
+def get_database_url():
+    """获取数据库URL，支持多种环境"""
+    # 优先使用环境变量
+    if os.getenv("DATABASE_URL"):
+        return os.getenv("DATABASE_URL")
+    
+    # 本地开发环境
+    if os.path.exists("data"):
+        # 如果data目录存在，使用data目录
+        DATA_DIR = "data"
+        os.makedirs(DATA_DIR, exist_ok=True)
+        DATABASE_FILE = os.path.join(DATA_DIR, "app.db")
+        return f"sqlite:///{DATABASE_FILE}"
+    
+    # Docker环境
+    if os.path.exists("/app"):
+        DATA_DIR = "/app/data"
+        os.makedirs(DATA_DIR, exist_ok=True)
+        DATABASE_FILE = os.path.join(DATA_DIR, "app.db")
+        return f"sqlite:///{DATABASE_FILE}"
+    
+    # 默认使用当前目录
+    return "sqlite:///./app.db"
 
 # 数据库URL
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DATABASE_FILE}")
+DATABASE_URL = get_database_url()
 
 # 创建数据库引擎
 engine = create_engine(

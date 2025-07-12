@@ -23,8 +23,10 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup():
     # 延迟导入以避免循环导入问题
-    from database import init_db
+    from database import init_db, DATABASE_URL
+    print(f"正在初始化数据库: {DATABASE_URL}")
     init_db()
+    print("数据库初始化完成")
 
 app.include_router(user.router, prefix="/api/users", tags=["用户"])
 app.include_router(article.router, prefix="/api/articles", tags=["文章"])

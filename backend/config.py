@@ -12,9 +12,6 @@ class Settings:
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
     
-    # 数据库配置
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./app.db")
-    
     # CORS配置
     ALLOWED_ORIGINS: List[str] = [
         "http://localhost:3000",
